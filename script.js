@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const thicknessInput = document.getElementById('thickness');
     const densityInput = document.getElementById('density');
     const costInput = document.getElementById('cost');
+    const truckTypeSelect = document.getElementById('truck-type');
 
     // Frost Inputs
     const frostToggle = document.getElementById('frost-toggle');
@@ -23,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalCostElement = document.getElementById('total-cost');
 
     const inputs = [lengthInput, widthInput, thicknessInput, densityInput, fssThicknessInput, costInput];
-    const settings = [frostZoneSelect, loadClassSelect, frostToggle];
+    const settings = [frostZoneSelect, loadClassSelect, frostToggle, truckTypeSelect];
 
     let debounceTimer;
 
@@ -83,6 +84,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     const costPerTon = parseFloat(costInput.value) || 0;
                     const totalCost = (parseFloat(data.asphaltWeight) * costPerTon).toFixed(2);
                     totalCostElement.innerText = totalCost;
+
+                    // Visualization: Asphalt
+                    // Max display height approx 100px for asphalt
+                    // Map 0-30cm to 0-100px
+                    const thicknessVal = parseFloat(thickness);
+                    const aspHeight = Math.min(thicknessVal * 4, 120); // Scale factor
+                    const aspLayer = document.getElementById('layer-asphalt');
+                    aspLayer.style.height = `${aspHeight}px`;
+                    aspLayer.querySelector('span').innerText = `Asphalt ${thicknessVal}cm`;
+
+                    calculateTrucks(parseFloat(data.asphaltWeight), 0);
                 }
 
                 if (data.frostResult) {
@@ -96,8 +108,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     frostWeightElement.innerText = data.frostResult.fssWeight;
                     frostVolumeElement.innerText = data.frostResult.fssVolume;
+
+                    // Visualization: Frost
+                    const fssVal = parseFloat(data.frostResult.usedFssDepth);
+                    const fssHeight = Math.min(fssVal * 2, 100); // Scale factor
+                    const fssLayer = document.getElementById('layer-frost');
+                    fssLayer.style.height = `${fssHeight}px`;
+                    fssLayer.querySelector('span').innerText = `Frost ${fssVal}cm`;
+
+                    calculateTrucks(parseFloat(resultElement.innerText), parseFloat(data.frostResult.fssWeight));
                 } else {
                     frostResultContainer.style.display = 'none';
+                    // Reset Frost Vis
+                    document.getElementById('layer-frost').style.height = '0px';
+                    document.getElementById('trucks-frost-container').style.display = 'none';
+                    calculateTrucks(parseFloat(resultElement.innerText), 0);
                 }
 
             } catch (e) {
@@ -218,5 +243,33 @@ async function exportPDF() {
         headStyles: { fillColor: [74, 222, 128] }
     });
 
+
+
+    // Add Logistics to PDF
+    const truckCapacity = document.getElementById('truck-type').value;
+    const asphaltTrucks = document.getElementById('trucks-asphalt').innerText;
+    doc.text(`Logistics Estimate (Truck Capacity: ${truckCapacity}t)`, 20, doc.lastAutoTable.finalY + 20);
+    doc.text(`- Asphalt Trucks Needed: ${asphaltTrucks}`, 20, doc.lastAutoTable.finalY + 28);
+
+
     doc.save("Asphalt_Calculation.pdf");
+}
+
+function calculateTrucks(asphaltWeight, frostWeight) {
+    const truckCapacity = parseFloat(document.getElementById('truck-type').value);
+    if (!truckCapacity) return;
+
+    // Asphalt
+    const aspTrucks = Math.ceil(asphaltWeight / truckCapacity);
+    document.getElementById('trucks-asphalt').innerText = aspTrucks;
+
+    // Frost
+    const frostContainer = document.getElementById('trucks-frost-container');
+    if (frostWeight > 0) {
+        const frostTrucks = Math.ceil(frostWeight / truckCapacity);
+        document.getElementById('trucks-frost').innerText = frostTrucks;
+        frostContainer.style.display = 'flex';
+    } else {
+        frostContainer.style.display = 'none';
+    }
 }
