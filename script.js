@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const densityInput = document.getElementById('density');
     const costInput = document.getElementById('cost');
     const truckTypeSelect = document.getElementById('truck-type');
+    const regionSelect = document.getElementById('region-select');
 
     // Frost Inputs
     const frostToggle = document.getElementById('frost-toggle');
@@ -24,7 +25,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalCostElement = document.getElementById('total-cost');
 
     const inputs = [lengthInput, widthInput, thicknessInput, densityInput, fssThicknessInput, costInput];
-    const settings = [frostZoneSelect, loadClassSelect, frostToggle, truckTypeSelect];
+    const settings = [frostZoneSelect, loadClassSelect, frostToggle, truckTypeSelect, regionSelect];
+
+    const priceTable = {
+        'DE_AVG': 85,
+        'DE_HIGH': 105,
+        'DE_LOW': 70,
+        'AT': 90,
+        'CH': 120
+    };
+
+    // Initialize Cost on Load
+    if (priceTable[regionSelect.value]) {
+        costInput.value = priceTable[regionSelect.value];
+    }
 
     let debounceTimer;
 
@@ -171,6 +185,27 @@ function toggleDarkMode() {
         localStorage.setItem('theme', 'dark');
     }
 }
+
+// Region Change Handler
+document.getElementById('region-select').addEventListener('change', (e) => {
+    const region = e.target.value;
+    const priceTable = {
+        'DE_AVG': 85,
+        'DE_HIGH': 105,
+        'DE_LOW': 70,
+        'AT': 90,
+        'CH': 120
+    };
+
+    if (priceTable[region]) {
+        document.getElementById('cost').value = priceTable[region];
+        // Trigger calculation updates (since cost changed)
+        // We can access 'calculate' if we move this inside DOMContentLoaded or dispatch event
+        const costInput = document.getElementById('cost');
+        const event = new Event('input', { bubbles: true });
+        costInput.dispatchEvent(event);
+    }
+});
 
 async function exportPDF() {
     const { jsPDF } = window.jspdf;
