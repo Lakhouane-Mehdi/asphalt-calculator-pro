@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <title>Asphalt Rechner Pro | by Mehdi Lakhouane</title>
+    <meta name="description"
+        content="Professional Asphalt & Frost Protection Calculator (Asphalt Rechner). Calculate tonnage, RStO 12 Frost Zones, and material cost instantly. Developed by Mehdi Lakhouane.">
+    <meta name="keywords"
+        content="Asphalt Rechner, Mehdi Lakhouane, Asphalt Calculator, Frostschutzschicht Rechner, Straßenbau Calculator, Asphalt Tonnage, RStO 12">
+    <meta name="author" content="Mehdi Lakhouane">
+    <meta name="robots" content="index, follow">
+    <!-- Google Verification -->
+    <meta name="google-site-verification" content="ReTRCNQrCHZCpSo9aM1lrFLAVuzi_fx8ThXjrOUdEY4" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Asphalt Rechner Pro | Mehdi Lakhouane">
+    <meta property="og:description" content="Calculate asphalt and frost protection layers securely online.">
+
+    <!-- Structured Data (JSON-LD) for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "name": "Asphalt Rechner Pro",
+          "operatingSystem": "Web",
+          "applicationCategory": "BusinessApplication",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "EUR"
+          },
+          "author": {
+              "@type": "Person",
+              "name": "Mehdi Lakhouane",
+              "url": "https://asphalt-calculator-eight.vercel.app"
+          }
+        },
+        {
+          "@type": "Person",
+          "name": "Mehdi Lakhouane",
+          "jobTitle": "Software Developer",
+          "description": "Developer of the Professional Asphalt Rechner tool."
+        }
+      ]
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="background-glob"></div>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>Asphalt <span class="highlight">Rechner</span></h1>
+                <p>Professional Material Estimator</p>
+            </div>
+            <div class="theme-toggle" onclick="toggleDarkMode()" title="Toggle Dark/Light Mode">
+                <span id="theme-icon">🌙</span>
+            </div>
+        </header>
+
+        <main class="calculator-card">
+            <div class="input-group">
+                <label for="length">Length (Länge)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="length" placeholder="0" min="0" step="0.1">
+                    <span class="unit">m</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="width">Width (Breite)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="width" placeholder="0" min="0" step="0.1">
+                    <span class="unit">m</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="thickness">Thickness (Dicke)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="thickness" placeholder="0" min="0" step="0.5">
+                    <span class="unit">cm</span>
+                </div>
+            </div>
+
+            <div class="settings-toggle" onclick="toggleSettings()">
+                Advanced Settings <span>&#9662;</span>
+            </div>
+
+            <div class="advanced-settings" id="advanced-settings">
+                <div class="input-group">
+                    <label for="density">Asphalt Density (Dichte)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="density" value="2.4" min="1.0" step="0.01">
+                        <span class="unit">t/m³</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="cost">Material Cost (Preis)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="cost" placeholder="0" min="0" step="0.01">
+                        <span class="unit">€/t</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- FROST PROTECTION SECTION -->
+            <div class="frost-section">
+                <div class="section-title">
+                    <input type="checkbox" id="frost-toggle" onchange="toggleFrostSection()">
+                    <label for="frost-toggle">Include Frost Protection Layer (Frostschutzschicht)</label>
+                </div>
+
+                <div class="frost-content" id="frost-content">
+                    <div class="input-group">
+                        <label for="frost-zone">Frost Zone (Frostzone)</label>
+                        <select id="frost-zone">
+                            <option value="1">Zone I (Low)</option>
+                            <option value="2">Zone II (Medium)</option>
+                            <option value="3">Zone III (High)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="load-class">Load Class (Belastungsklasse)</label>
+                        <select id="load-class">
+                            <option value="light">Light (Private/Walkway)</option>
+                            <option value="medium" selected>Medium (Driveway/Residential)</option>
+                            <option value="heavy">Heavy (Industrial/Road)</option>
+                        </select>
+                    </div>
+
+                    <div class="info-box" id="recommendation-box">
+                        <small>Recommended Total Depth (RStO): <span id="rec-total-depth">--</span> cm</small>
+                    </div>
+
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label for="fss-thickness">Frost Layer Thickness (Schotter)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="fss-thickness" placeholder="Calculated..." min="0" step="1">
+                            <span class="unit">cm</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-area" id="result-area">
+                <div class="result-label">Asphalt Weight</div>
+                <div class="result-value"><span id="result">0.00</span> <span class="unit-large">t</span></div>
+                <div class="result-sub">Volume: <span id="volume">0.00</span> m³</div>
+                <div class="result-sub">Total Cost: <span id="total-cost"
+                        style="color: var(--success-color); font-weight: 700;">0.00</span> €</div>
+
+                <!-- ADDED FROST RESULTS -->
+                <div id="frost-result-container"
+                    style="display:none; margin-top: 20px; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.2);">
+                    <div class="result-label" style="color: #cbd5e1;">Frost Layer Required</div>
+                    <div class="result-value" style="font-size: 2rem;"><span id="frost-weight">0.00</span> <span
+                            class="unit-large">t</span></div>
+                    <div class="result-sub">Volume: <span id="frost-volume">0.00</span> m³</div>
+                </div>
+
+                <button class="export-btn" onclick="exportPDF()">Download PDF Report</button>
+            </div>
+        </main>
+    </div>
+
+    <footer style="text-align: center; color: var(--text-secondary); padding: 20px; font-size: 0.9rem;">
+        Made by <span style="color: var(--accent-color); font-weight: 600;">Mehdi Lakhouane</span>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>
