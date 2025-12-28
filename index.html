@@ -161,6 +161,17 @@
                 </div>
             </div>
 
+
+            <!-- VISUAL CROSS-SECTION -->
+            <div class="visual-container">
+                <label>Cross-Section Preview</label>
+                <div class="layers-view">
+                    <div id="layer-asphalt" class="layer asphalt-layer"><span>Asphalt</span></div>
+                    <div id="layer-frost" class="layer frost-layer"><span>Frost Layer</span></div>
+                    <div class="layer ground-layer"><span>Subgrade</span></div>
+                </div>
+            </div>
+
             <div class="result-area" id="result-area">
                 <div class="result-label">Asphalt Weight</div>
                 <div class="result-value"><span id="result">0.00</span> <span class="unit-large">t</span></div>
@@ -175,6 +186,29 @@
                     <div class="result-value" style="font-size: 2rem;"><span id="frost-weight">0.00</span> <span
                             class="unit-large">t</span></div>
                     <div class="result-sub">Volume: <span id="frost-volume">0.00</span> m³</div>
+
+                </div>
+
+                <!-- LOGISTICS CALCULATOR -->
+                <div class="logistics-section">
+                    <div class="result-label" style="color: var(--accent-color); margin-top: 20px;">Logistics Estimator
+                    </div>
+                    <div class="input-group" style="margin-bottom: 10px;">
+                        <select id="truck-type">
+                            <option value="12">Small Tipper (12t)</option>
+                            <option value="18">Medium Tipper (18t)</option>
+                            <option value="25" selected>Semi-Trailer (25t)</option>
+                        </select>
+                    </div>
+                    <div class="truck-results">
+                        <div class="truck-icon">🚛</div>
+                        <div class="truck-count">
+                            <span id="trucks-asphalt">0</span> <small>Asphalt Trips</small>
+                        </div>
+                        <div class="truck-count" id="trucks-frost-container" style="display:none;">
+                            <span id="trucks-frost">0</span> <small>Gravel Trips</small>
+                        </div>
+                    </div>
                 </div>
 
                 <button class="export-btn" onclick="exportPDF()">Download PDF Report</button>
