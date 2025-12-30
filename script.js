@@ -1,4 +1,14 @@
+let currentLang = 'en';
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize Language
+    const savedLang = localStorage.getItem('lang');
+    if (savedLang) {
+        setLang(savedLang);
+    } else {
+        setLang('en');
+    }
+
     const lengthInput = document.getElementById('length');
     const widthInput = document.getElementById('width');
     const thicknessInput = document.getElementById('thickness');
@@ -40,29 +50,52 @@ document.addEventListener('DOMContentLoaded', () => {
         costInput.value = priceTable[regionSelect.value];
     }
 
+    // Load History
+    updateHistoryUI();
+
     let debounceTimer;
 
     async function calculate() {
         // Collect Inputs
-        const length = lengthInput.value;
-        const width = widthInput.value;
-        const thickness = thicknessInput.value;
-        const density = densityInput.value;
+        let length = parseFloat(lengthInput.value) || 0;
+        let width = parseFloat(widthInput.value) || 0;
+        const thickness = parseFloat(thicknessInput.value) || 0;
+        const density = parseFloat(densityInput.value) || 0;
+
+        // Shape Logic
+        const shape = document.querySelector('input[name="shape"]:checked').value;
+        let area = 0;
+
+        if (shape === 'rect') {
+            area = length * width;
+        } else {
+            const diameter = parseFloat(document.getElementById('diameter').value) || 0;
+            const radius = diameter / 2;
+            area = Math.PI * radius * radius;
+            // For calculation consistency, we can simulate an equivalent rectangle or just pass raw data
+            // But we need to calculate Weight here or pass area to server?
+            // The server expects length/width. Let's send area equivalent to Server or handle math here?
+            // Quick fix: if circle, send length = area, width = 1 to server? 
+            // Better: update server to accept Area. But for now I'll convert locally.
+            // Actually, I should update the server to be robust, BUT I can't edit server easily right now.
+            // Safe hack: length = area, width = 1.
+            length = area;
+            width = 1;
+        }
+
+        const wastePercent = parseFloat(document.getElementById('waste').value) || 0;
         const zone = frostZoneSelect.value;
         const loadClass = loadClassSelect.value;
         const frostActive = frostToggle.checked;
         const fssOverride = fssThicknessInput.value;
 
         // Basic Check
-        if ((!length || !width || !thickness) && !frostActive) {
-            // Don't clear results, just return, unless we want to clear?
+        if (area <= 0 && !frostActive) {
             return;
         }
 
-        // Cancel previous pending request
         clearTimeout(debounceTimer);
 
-        // Debounce: Wait 300ms after user stops typing
         debounceTimer = setTimeout(async () => {
             try {
                 const response = await fetch('/api/calculate', {
@@ -78,44 +111,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.status === 429) {
                     resultElement.innerText = "BUSY";
-                    console.warn("Rate limit exceeded");
                     return;
                 }
 
-                if (!response.ok) {
-                    console.error("Server API Error");
-                    return;
-                }
+                if (!response.ok) return;
 
                 const data = await response.json();
 
-                // Update UI with Server Data
+                // Apply Waste Factor Here (Client Side)
                 if (data.asphaltWeight) {
-                    resultElement.innerText = data.asphaltWeight;
-                    volumeElement.innerText = data.asphaltVolume;
+                    let weight = parseFloat(data.asphaltWeight);
+                    let volume = parseFloat(data.asphaltVolume);
 
-                    // Cost Calculation
+                    if (wastePercent > 0) {
+                        const factor = 1 + (wastePercent / 100);
+                        weight *= factor;
+                        volume *= factor;
+                    }
+
+                    resultElement.innerText = weight.toFixed(2);
+                    volumeElement.innerText = volume.toFixed(2);
+
                     const costPerTon = parseFloat(costInput.value) || 0;
-                    const totalCost = (parseFloat(data.asphaltWeight) * costPerTon).toFixed(2);
+                    const totalCost = (weight * costPerTon).toFixed(2);
                     totalCostElement.innerText = totalCost;
 
-                    // Visualization: Asphalt
-                    // Max display height approx 100px for asphalt
-                    // Map 0-30cm to 0-100px
+                    // Save to History
+                    saveToHistory({
+                        name: document.getElementById('project-name').value || "Project",
+                        date: new Date().toLocaleDateString(),
+                        weight: weight.toFixed(2),
+                        cost: totalCost
+                    });
+
+                    // Visualization
                     const thicknessVal = parseFloat(thickness);
-                    const aspHeight = Math.min(thicknessVal * 4, 120); // Scale factor
+                    const aspHeight = Math.min(thicknessVal * 4, 120);
                     const aspLayer = document.getElementById('layer-asphalt');
                     aspLayer.style.height = `${aspHeight}px`;
                     aspLayer.querySelector('span').innerText = `Asphalt ${thicknessVal}cm`;
 
-                    calculateTrucks(parseFloat(data.asphaltWeight), 0);
+                    calculateTrucks(weight, 0);
                 }
 
                 if (data.frostResult) {
                     frostResultContainer.style.display = 'block';
                     recTotalDepthElement.innerText = data.frostResult.recTotalDepth;
 
-                    // Smart Input Update: Only update the field if the user is NOT typing in it currently
                     if (document.activeElement !== fssThicknessInput && !fssOverride) {
                         fssThicknessInput.value = data.frostResult.usedFssDepth;
                     }
@@ -123,9 +165,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     frostWeightElement.innerText = data.frostResult.fssWeight;
                     frostVolumeElement.innerText = data.frostResult.fssVolume;
 
-                    // Visualization: Frost
                     const fssVal = parseFloat(data.frostResult.usedFssDepth);
-                    const fssHeight = Math.min(fssVal * 2, 100); // Scale factor
+                    const fssHeight = Math.min(fssVal * 2, 100);
                     const fssLayer = document.getElementById('layer-frost');
                     fssLayer.style.height = `${fssHeight}px`;
                     fssLayer.querySelector('span').innerText = `Frost ${fssVal}cm`;
@@ -133,7 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     calculateTrucks(parseFloat(resultElement.innerText), parseFloat(data.frostResult.fssWeight));
                 } else {
                     frostResultContainer.style.display = 'none';
-                    // Reset Frost Vis
                     document.getElementById('layer-frost').style.height = '0px';
                     document.getElementById('trucks-frost-container').style.display = 'none';
                     calculateTrucks(parseFloat(resultElement.innerText), 0);
@@ -147,20 +187,112 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Attach Listeners
     inputs.forEach(input => input.addEventListener('input', calculate));
+    document.getElementById('diameter').addEventListener('input', calculate);
+    document.getElementById('waste').addEventListener('input', calculate);
     settings.forEach(input => input.addEventListener('change', calculate));
 
-    // Special case for Frost Toggle to show/hide section immediately visually, then calc
     frostToggle.addEventListener('change', () => {
-        // The toggleFrostSection function still handles the visual slide
-        // trigger calc to get data
         calculate();
     });
-    // Check for saved theme
+
     if (localStorage.getItem('theme') === 'light') {
         document.body.classList.add('light-mode');
         document.getElementById('theme-icon').innerText = '☀️';
     }
 });
+
+/* --- Feature Functions --- */
+function toggleShape() {
+    const shape = document.querySelector('input[name="shape"]:checked').value;
+    const rectInputs = document.getElementById('rect-inputs');
+    const circleInputs = document.getElementById('circle-inputs');
+
+    if (shape === 'rect') {
+        rectInputs.style.display = 'block';
+        circleInputs.style.display = 'none';
+    } else {
+        rectInputs.style.display = 'none';
+        circleInputs.style.display = 'block';
+    }
+    // Trigger calc to clear/update
+    const lengthInput = document.getElementById('length');
+    // Dispatch event to allow recalculation if values exist
+    const event = new Event('input', { bubbles: true });
+    lengthInput.dispatchEvent(event);
+}
+
+function updateDensity() {
+    const type = document.getElementById('material-type').value;
+    const densityInput = document.getElementById('density');
+
+    // Values based on German standards
+    const densities = {
+        'surface': 2.40, // Deckschicht
+        'binder': 2.45,  // Binderschicht
+        'base': 2.50,    // Tragschicht
+    };
+
+    if (densities[type]) {
+        densityInput.value = densities[type];
+        // Trigger calc
+        const event = new Event('input', { bubbles: true });
+        densityInput.dispatchEvent(event);
+    }
+}
+
+// History Functions
+function saveToHistory(entry) {
+    if (parseFloat(entry.weight) <= 0) return;
+
+    let history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
+
+    // Avoid duplicates only if exactly same math (optional check, skip for now to simplify)
+    // Limit to 5
+    // unshift logic to add to top
+    // Check if last entry is identical to avoid spam while typing?
+    if (history.length > 0) {
+        const last = history[0];
+        if (last.weight === entry.weight && last.name === entry.name) return;
+    }
+
+    history.unshift(entry);
+    if (history.length > 5) history.pop();
+
+    localStorage.setItem('calcHistory', JSON.stringify(history));
+    updateHistoryUI();
+}
+
+function updateHistoryUI() {
+    const list = document.getElementById('history-list');
+    if (!list) return;
+
+    const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
+
+    if (history.length === 0) {
+        list.parentElement.style.display = 'none';
+        return;
+    }
+
+    list.parentElement.style.display = 'block';
+    list.innerHTML = history.map(item => `
+        <div class="history-item">
+            <div>
+                <span class="hist-name">${item.name}</span>
+                <small>${item.date}</small>
+            </div>
+            <div>
+                <span class="hist-val">${item.weight} t</span>
+                <small>${item.cost} €</small>
+            </div>
+        </div>
+    `).join('');
+}
+
+function clearHistory() {
+    localStorage.removeItem('calcHistory');
+    updateHistoryUI();
+}
+
 
 function toggleSettings() {
     const settings = document.getElementById('advanced-settings');
@@ -207,6 +339,63 @@ document.getElementById('region-select').addEventListener('change', (e) => {
     }
 });
 
+/* --- Internationalization Functions --- */
+function setLang(lang) {
+    if (!translations[lang]) return;
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+    updateContent();
+}
+
+function updateContent() {
+    const t = translations[currentLang];
+
+    // Update Text Content
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (t[key]) {
+            element.innerHTML = t[key]; // innerHTML to allow HTML like <span>
+        }
+    });
+
+    // Update Placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+        const key = element.getAttribute('data-i18n-placeholder');
+        if (t[key]) {
+            element.placeholder = t[key];
+        }
+    });
+
+    // Update Tooltips
+    document.querySelectorAll('[data-tooltip]').forEach(element => {
+        const key = element.getAttribute('data-tooltip');
+        if (t[key]) {
+            element.setAttribute('data-tooltip-text', t[key]);
+        }
+    });
+
+    // Highlight active lang
+    document.querySelectorAll('.lang-opt').forEach(opt => {
+        opt.style.fontWeight = opt.innerText.toLowerCase().includes(currentLang) ? '700' : '400';
+        opt.style.color = opt.innerText.toLowerCase().includes(currentLang) ? 'var(--accent-color)' : 'var(--text-secondary)';
+    });
+}
+
+function printPage() {
+    window.print();
+}
+
+function emailResults() {
+    const weight = document.getElementById('result').innerText;
+    const cost = document.getElementById('total-cost').innerText;
+    const project = document.getElementById('project-name').value || "Project";
+
+    const subject = encodeURIComponent(`Asphalt Calculation: ${project}`);
+    const body = encodeURIComponent(`Here is the estimate for ${project}:\n\nTotal Asphalt Needed: ${weight} tons\nEstimated Material Cost: ${cost} €\n\nGenerated by Asphalt Rechner Pro.`);
+
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
 async function exportPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -221,26 +410,51 @@ async function exportPDF() {
     doc.setFont("helvetica", "normal");
     doc.setTextColor(100);
     doc.text(`Generated on: ${new Date().toLocaleString()}`, 20, 28);
-    doc.text("Evaluated by: Asphalt Rechner Pro", 20, 33);
+
+    const projectName = document.getElementById('project-name').value;
+    if (projectName) {
+        doc.setFontSize(14);
+        doc.setTextColor(56, 189, 248); // Accent colorish
+        doc.text(`Project: ${projectName}`, 20, 38);
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+    }
+
+    doc.text("Evaluated by: Asphalt Rechner Pro", 20, projectName ? 45 : 33);
 
     // Inputs Table
-    const length = document.getElementById('length').value;
-    const width = document.getElementById('width').value;
+    const shape = document.querySelector('input[name="shape"]:checked').value;
     const thickness = document.getElementById('thickness').value;
     const density = document.getElementById('density').value;
+    const waste = document.getElementById('waste').value;
     const cost = document.getElementById('cost').value;
 
     const inputsData = [
-        ['Parameter', 'Value', 'Unit'],
-        ['Length', length, 'm'],
-        ['Width', width, 'm'],
-        ['Thickness', thickness, 'cm'],
-        ['Density', density, 't/m³'],
-        ['Material Cost', cost || '0', '€/t']
+        ['Parameter', 'Value', 'Unit']
     ];
 
+    if (shape === 'rect') {
+        inputsData.push(
+            ['Shape', 'Rectangle', '-'],
+            ['Length', document.getElementById('length').value, 'm'],
+            ['Width', document.getElementById('width').value, 'm']
+        );
+    } else {
+        inputsData.push(
+            ['Shape', 'Circle', '-'],
+            ['Diameter', document.getElementById('diameter').value, 'm']
+        );
+    }
+
+    inputsData.push(
+        ['Thickness', thickness, 'cm'],
+        ['Density', density, 't/m³'],
+        ['Waste Factor', waste, '%'],
+        ['Material Cost', cost || '0', '€/t']
+    );
+
     doc.autoTable({
-        startY: 40,
+        startY: projectName ? 55 : 43,
         head: [['Parameter', 'Value', 'Unit']],
         body: inputsData.slice(1),
         theme: 'grid',
@@ -287,7 +501,7 @@ async function exportPDF() {
     doc.text(`- Asphalt Trucks Needed: ${asphaltTrucks}`, 20, doc.lastAutoTable.finalY + 28);
 
 
-    doc.save("Asphalt_Calculation.pdf");
+    doc.save(`Asphalt_Calculation_${projectName || "Report"}.pdf`);
 }
 
 function calculateTrucks(asphaltWeight, frostWeight) {

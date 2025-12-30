@@ -78,11 +78,43 @@ body {
     width: 100%;
     max-width: 420px;
     padding: 20px;
+    position: relative;
+    /* Anchor for absolute controls */
 }
 
 header {
     text-align: center;
     margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Removed relative positioning here to let controls align to container */
+}
+
+.controls-top {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    /* Increased separation */
+    z-index: 10;
+}
+
+.lang-switch {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.lang-opt {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.lang-opt:hover {
+    color: var(--accent-color);
 }
 
 h1 {
@@ -119,11 +151,44 @@ header p {
 }
 
 label {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 5px;
     margin-bottom: 8px;
     font-weight: 600;
     font-size: 0.9rem;
     color: var(--text-secondary);
+}
+
+.tooltip-icon {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    color: var(--bg-color);
+    font-size: 0.7rem;
+    cursor: help;
+    position: relative;
+}
+
+.tooltip-icon:hover::after {
+    content: attr(data-tooltip-text);
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #000;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 10;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
 }
 
 .input-wrapper {
@@ -321,33 +386,27 @@ select:focus {
 
 /* Theme Toggle */
 .theme-toggle {
-    position: absolute;
-    top: 20px;
-    right: 20px;
     cursor: pointer;
-    font-size: 1.5rem;
-    padding: 10px;
+    font-size: 1.2rem;
+    padding: 5px;
     border-radius: 50%;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
     transition: all 0.3s ease;
 }
 
 .theme-toggle:hover {
     transform: scale(1.1);
-    box-shadow: 0 0 15px var(--accent-color);
+    background: rgba(255, 255, 255, 0.1);
 }
 
-header {
-    position: relative;
-    /* For absolute positioning of toggle if needed */
+.action-buttons {
+    display: grid;
+    gap: 10px;
+    margin-top: 20px;
 }
 
-/* Export Button */
-.export-btn {
+.action-btn {
     display: block;
     width: 100%;
-    margin-top: 20px;
     padding: 15px;
     background: var(--accent-gradient);
     color: white;
@@ -359,13 +418,20 @@ header {
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.export-btn:hover {
+.action-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 20px rgba(56, 189, 248, 0.3);
 }
 
-.export-btn:active {
-    transform: translateY(0);
+.action-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.action-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: none;
 }
 
 /* --- VISUALIZATION STYLES --- */
@@ -380,6 +446,7 @@ header {
 .visual-container label {
     margin-bottom: 15px;
     text-align: center;
+    justify-content: center;
 }
 
 .layers-view {
@@ -433,6 +500,99 @@ header {
     height: 30px;
     /* Static base */
     color: #a8a29e;
+}
+
+/* --- SHAPE SELECTOR --- */
+.shape-selector {
+    display: flex;
+    background: var(--input-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 5px;
+    gap: 5px;
+}
+
+.shape-opt {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 0;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+}
+
+.shape-opt:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.shape-opt input {
+    display: none;
+}
+
+.shape-opt:has(input:checked) {
+    background: var(--accent-gradient);
+    color: white;
+    font-weight: 700;
+}
+
+/* History Section */
+.history-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--border-color);
+    text-align: left;
+}
+
+.history-section h3 {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.history-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.history-item div {
+    display: flex;
+    flex-direction: column;
+}
+
+.history-item .hist-name {
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+.history-item .hist-val {
+    color: var(--text-primary);
+}
+
+.clear-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.clear-btn:hover {
+    background: rgba(255, 0, 0, 0.1);
+    color: #ef4444;
+    border-color: #ef4444;
 }
 
 /* --- LOGISTICS STYLES --- */
@@ -500,4 +660,87 @@ body.light-mode .visual-container {
 
 body.light-mode .truck-count {
     background: rgba(0, 0, 0, 0.05);
+}
+
+/* Print Styles */
+@media print {
+
+    .action-buttons,
+    .theme-toggle,
+    .lang-switch,
+    .controls-top .lang-switch,
+    .controls-top {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+        color: black;
+        overflow: visible;
+        display: block;
+        height: auto;
+    }
+
+    .background-glob {
+        display: none;
+    }
+
+    .container {
+        max-width: 100%;
+        padding: 0;
+    }
+
+    .calculator-card {
+        box-shadow: none;
+        border: none;
+        backdrop-filter: none;
+        background: white;
+    }
+
+    input,
+    select {
+        border: 1px solid #ccc;
+        background: white;
+        color: black;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    .shape-selector {
+        background: #eee;
+    }
+
+    .shape-opt {
+        color: black;
+    }
+
+    .history-section {
+        display: none !important;
+        /* Hide history in print */
+    }
+
+    .result-area {
+        break-inside: avoid;
+        border: 1px solid #ccc;
+        background: #f9f9f9;
+        color: black !important;
+    }
+
+    .result-value,
+    .result-label,
+    .result-sub {
+        color: black !important;
+    }
+
+    .advanced-settings {
+        display: block !important;
+    }
+
+    .frost-content {
+        display: block !important;
+    }
+
+    .visual-container {
+        break-inside: avoid;
+    }
 }
