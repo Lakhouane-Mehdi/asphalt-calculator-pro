@@ -107,3 +107,5 @@ app.post('/api/calculate', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running secure on http://localhost:${PORT}`);
 });
+
+module.exports = app;

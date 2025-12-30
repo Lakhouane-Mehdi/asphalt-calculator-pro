@@ -16,6 +16,10 @@
         {
             "src": "script.js",
             "use": "@vercel/static"
+        },
+        {
+            "src": "translations.js",
+            "use": "@vercel/static"
         }
     ],
     "routes": [
