@@ -199,9 +199,25 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('light-mode');
         document.getElementById('theme-icon').innerText = '☀️';
     }
+
+    // Modal Close Logic (Click Outside)
+    window.onclick = function (event) {
+        const modal = document.getElementById('help-modal');
+        if (event.target == modal) {
+            closeHelp();
+        }
+    }
 });
 
 /* --- Feature Functions --- */
+function openHelp() {
+    document.getElementById('help-modal').style.display = 'block';
+}
+
+function closeHelp() {
+    document.getElementById('help-modal').style.display = 'none';
+}
+
 function toggleShape() {
     const shape = document.querySelector('input[name="shape"]:checked').value;
     const rectInputs = document.getElementById('rect-inputs');
