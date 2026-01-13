@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 // Security Middleware
 app.use(helmet()); // Sets various HTTP headers for security
 app.use(cors()); // Enables CORS (though same-origin in this setup)
-app.use(express.json()); // Parse JSON bodies
+app.use(express.json({ limit: '10kb' })); // Parse JSON bodies with size limit
 
 // Rate Limiting (Prevent DDoS/Spam)
 const limiter = rateLimit({
