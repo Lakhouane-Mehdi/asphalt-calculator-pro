@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import { Truck, Timer, Activity, RotateCw } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function TruckLogistics() {
+    const { t } = useLanguage();
     const [plantRate, setPlantRate] = useState<string>(""); // TPH
     const [truckCapacity, setTruckCapacity] = useState<string>(""); // Tons
     const [cycleTime, setCycleTime] = useState<string>(""); // Minutes (Round Trip)
@@ -43,59 +45,59 @@ export default function TruckLogistics() {
                     <Truck className="h-6 w-6" />
                 </div>
                 <div>
-                    <h2 className="text-xl font-bold">Logistics Planner</h2>
-                    <p className="text-xs text-muted-foreground">Fleet Optimization</p>
+                    <h2 className="text-xl font-bold">{t('logistics.title')}</h2>
+                    <p className="text-xs text-muted-foreground">{t('logistics.subtitle')}</p>
                 </div>
             </CardHeader>
 
             <CardContent className="space-y-6">
                 <div className="grid gap-4 sm:grid-cols-3">
                     <Input
-                        label="Plant Rate (TPH)"
+                        label={t('logistics.plantRate')}
                         icon={Activity}
                         type="number"
                         value={plantRate}
                         onChange={(e) => setPlantRate(e.target.value)}
-                        placeholder="e.g. 150"
+                        placeholder={t('placeholders.plantRate')}
                     />
                     <Input
-                        label="Truck Capacity (t)"
+                        label={t('logistics.truckCapacity')}
                         icon={Truck}
                         type="number"
                         value={truckCapacity}
                         onChange={(e) => setTruckCapacity(e.target.value)}
-                        placeholder="e.g. 20"
+                        placeholder={t('placeholders.truckInfo')}
                     />
                     <Input
-                        label="Cycle Time (min)"
+                        label={t('logistics.cycleTime')}
                         icon={Timer}
                         type="number"
                         value={cycleTime}
                         onChange={(e) => setCycleTime(e.target.value)}
-                        placeholder="e.g. 60"
+                        placeholder={t('placeholders.cycleTime')}
                     />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="rounded-xl bg-secondary/30 border border-border p-4 flex flex-col items-center justify-center text-center">
-                        <span className="text-xs font-medium text-muted-foreground mb-1">Fleet Required</span>
+                        <span className="text-xs font-medium text-muted-foreground mb-1">{t('logistics.fleetRequired')}</span>
                         <div className="flex items-baseline gap-1">
                             <span className="text-4xl font-bold text-foreground">{trucksRequired}</span>
-                            <span className="text-sm font-medium text-muted-foreground">Trucks</span>
+                            <span className="text-sm font-medium text-muted-foreground">{t('logistics.trucks')}</span>
                         </div>
                         <p className="text-[10px] text-muted-foreground/60 mt-1">
-                            To match plant speed
+                            {t('logistics.matchSpeed')}
                         </p>
                     </div>
 
                     <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4 flex flex-col items-center justify-center text-center">
-                        <span className="text-xs font-medium text-blue-400 mb-1">Spacing Interval</span>
+                        <span className="text-xs font-medium text-blue-400 mb-1">{t('logistics.spacing')}</span>
                         <div className="flex items-baseline gap-1">
                             <span className="text-4xl font-bold text-blue-500">{loadInterval}</span>
-                            <span className="text-sm font-medium text-blue-400">mins</span>
+                            <span className="text-sm font-medium text-blue-400">{t('logistics.mins')}</span>
                         </div>
                         <p className="text-[10px] text-blue-400/60 mt-1 flex items-center gap-1">
-                            <RotateCw className="h-3 w-3" /> Between arrivals
+                            <RotateCw className="h-3 w-3" /> {t('logistics.betweenArrivals')}
                         </p>
                     </div>
                 </div>

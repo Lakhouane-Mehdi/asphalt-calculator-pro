@@ -5,12 +5,21 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Smart Field: Asphalt Calculator",
-  description: "Advanced field assistant for asphalt professionals.",
+  title: "Smart Field: Asphalt Calculator by Mehdi Lakhouane",
+  description: "Advanced field assistant for asphalt professionals. Developed by Mehdi Lakhouane, featuring German Standards (RStO), Logistics planning, and Quality Control tools.",
+  applicationName: "Smart Field",
+  authors: [{ name: "Mehdi Lakhouane", url: "https://mehdi-lakhouanes-projects.vercel.app" }],
+  keywords: ["Asphalt Calculator", "Mehdi Lakhouane", "Smart Field", "Construction App", "Bitumen", "RStO", "German Standards", "Paving Tools"],
   manifest: "/manifest.json",
   icons: {
-    apple: "/icon.png", // We will need to create this later or user provides it
+    apple: "/icon.png",
   },
+  openGraph: {
+    title: "Smart Field by Mehdi Lakhouane",
+    description: "The ultimate Asphalt & Logistics calculator for professionals.",
+    siteName: "Smart Field",
+    type: "website",
+  }
 };
 
 export const viewport: Viewport = {
@@ -30,6 +39,30 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={`${inter.className} antialiased`}>
         {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "Smart Field: Asphalt Calculator",
+              "operatingSystem": "Web, iOS, Android",
+              "applicationCategory": "ConstructionApplication",
+              "author": {
+                "@type": "Person",
+                "name": "Mehdi Lakhouane",
+                "jobTitle": "Software Engineer & Builder",
+                "url": "https://mehdi-lakhouanes-projects.vercel.app"
+              },
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+              },
+              "description": "Professional asphalt calculator with German Standards, logistics tracking, and quality control tools. Created by Mehdi Lakhouane."
+            }),
+          }}
+        />
       </body>
     </html>
   );
