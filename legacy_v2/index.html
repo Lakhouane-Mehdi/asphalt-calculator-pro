@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <title>Asphalt Rechner Pro | by Mehdi Lakhouane</title>
+    <meta name="description"
+        content="Professional Asphalt & Frost Protection Calculator (Asphalt Rechner). Calculate tonnage, RStO 12 Frost Zones, and material cost instantly. Developed by Mehdi Lakhouane.">
+    <meta name="keywords"
+        content="Asphalt Rechner, Mehdi Lakhouane, Asphalt Calculator, Frostschutzschicht Rechner, Straßenbau Calculator, Asphalt Tonnage, RStO 12">
+    <meta name="author" content="Mehdi Lakhouane">
+    <meta name="robots" content="index, follow">
+    <!-- Google Verification -->
+    <meta name="google-site-verification" content="ReTRCNQrCHZCpSo9aM1lrFLAVuzi_fx8ThXjrOUdEY4" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Asphalt Rechner Pro | Mehdi Lakhouane">
+    <meta property="og:description" content="Calculate asphalt and frost protection layers securely online.">
+
+    <!-- Structured Data (JSON-LD) for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "name": "Asphalt Rechner Pro",
+          "operatingSystem": "Web",
+          "applicationCategory": "BusinessApplication",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "EUR"
+          },
+          "author": {
+              "@type": "Person",
+              "name": "Mehdi Lakhouane",
+              "url": "https://asphalt-calculator-eight.vercel.app"
+          }
+        },
+        {
+          "@type": "Person",
+          "name": "Mehdi Lakhouane",
+          "jobTitle": "Software Developer",
+          "description": "Developer of the Professional Asphalt Rechner tool."
+        }
+      ]
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="background-glob"></div>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1 data-i18n="title">Asphalt <span class="highlight">Rechner</span></h1>
+                <p data-i18n="subtitle">Professional Material Estimator</p>
+            </div>
+
+            <div class="controls-top">
+                <div class="lang-switch">
+                    <span class="lang-opt" onclick="setLang('en')">EN</span> |
+                    <span class="lang-opt" onclick="setLang('de')">DE</span>
+                </div>
+                <div class="theme-toggle" onclick="toggleDarkMode()" title="Toggle Dark/Light Mode">
+                    <span id="theme-icon">🌙</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="calculator-card">
+            <!-- Project Name Section -->
+            <div class="input-group">
+                <label for="project-name" data-i18n="project_name_label">Project Name</label>
+                <div class="input-wrapper">
+                    <input type="text" id="project-name" placeholder="e.g. Driveway Renovation"
+                        data-i18n-placeholder="project_name_placeholder">
+                </div>
+            </div>
+
+            <!-- SHAPE SELECTION -->
+            <div class="input-group">
+                <label data-i18n="shape_label">Area Shape</label>
+                <div class="shape-selector">
+                    <label class="shape-opt">
+                        <input type="radio" name="shape" value="rect" checked onchange="toggleShape()">
+                        <span data-i18n="shape_rect">Rectangle</span>
+                    </label>
+                    <label class="shape-opt">
+                        <input type="radio" name="shape" value="circle" onchange="toggleShape()">
+                        <span data-i18n="shape_circle">Circle</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- SHAPE SELECTION -->
+            <div class="input-group">
+                <label data-i18n="shape_label">Area Shape</label>
+                <div class="shape-selector">
+                    <label class="shape-opt">
+                        <input type="radio" name="shape" value="rect" checked onchange="toggleShape()">
+                        <span data-i18n="shape_rect">Rectangle</span>
+                    </label>
+                    <label class="shape-opt">
+                        <input type="radio" name="shape" value="circle" onchange="toggleShape()">
+                        <span data-i18n="shape_circle">Circle</span>
+                    </label>
+                </div>
+            </div>
+
+            <div id="rect-inputs">
+                <div class="input-group">
+                    <label for="length" data-i18n="length_label">Length (Länge)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="length" placeholder="0" min="0" step="0.1">
+                        <span class="unit">m</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="width" data-i18n="width_label">Width (Breite)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="width" placeholder="0" min="0" step="0.1">
+                        <span class="unit">m</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="circle-inputs" style="display:none;">
+                <div class="input-group">
+                    <label for="diameter" data-i18n="radius_label">Diameter</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="diameter" placeholder="0" min="0" step="0.1">
+                        <span class="unit">m</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="thickness" data-i18n="thickness_label">Thickness (Dicke)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="thickness" placeholder="0" min="0" step="0.5">
+                    <span class="unit">cm</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="waste" data-i18n="waste_label">Waste Factor (%)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="waste" value="5" min="0" max="50" step="1">
+                    <span class="unit">%</span>
+                </div>
+            </div>
+
+            <div class="settings-toggle" onclick="toggleSettings()">
+                <span data-i18n="settings_toggle">Advanced Settings</span> <span>&#9662;</span>
+            </div>
+
+            <div class="advanced-settings" id="advanced-settings">
+                <div class="input-group">
+                    <label data-i18n="material_type_label">Asphalt Type</label>
+                    <select id="material-type" onchange="updateDensity()">
+                        <option value="custom" data-i18n="mat_custom">Custom Density</option>
+                        <option value="surface" selected data-i18n="mat_surface">Surface Course (2.4)</option>
+                        <option value="binder" data-i18n="mat_binder">Binder Course (2.45)</option>
+                        <option value="base" data-i18n="mat_base">Base Course (2.5)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="density">
+                        <span data-i18n="density_label">Asphalt Density (Dichte)</span>
+                        <span class="tooltip-icon" data-tooltip="tooltip_density">?</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="number" id="density" value="2.4" min="1.0" step="0.01">
+                        <span class="unit">t/m³</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="region-select" data-i18n="region_label">Region / Estimate (Schätzung)</label>
+                    <div class="input-wrapper">
+                        <select id="region-select">
+                            <option value="" data-i18n="region_custom">Custom Price (Manuell)</option>
+                            <option value="DE_AVG" selected data-i18n="region_de_avg">Germany Ø (85€)</option>
+                            <option value="DE_HIGH" data-i18n="region_de_high">City / High Demand (105€)</option>
+                            <option value="DE_LOW" data-i18n="region_de_low">Rural / Low Demand (70€)</option>
+                            <option value="AT" data-i18n="region_at">Austria Ø (90€)</option>
+                            <option value="CH" data-i18n="region_ch">Switzerland Ø (120€)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="cost" data-i18n="cost_label">Material Cost (Preis)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="cost" placeholder="0" min="0" step="0.01">
+                        <span class="unit">€/t</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- FROST PROTECTION SECTION -->
+            <div class="frost-section">
+                <div class="section-title">
+                    <input type="checkbox" id="frost-toggle" onchange="toggleFrostSection()">
+                    <label for="frost-toggle" data-i18n="frost_toggle_label">Include Frost Protection Layer
+                        (Frostschutzschicht)</label>
+                </div>
+
+                <div class="frost-content" id="frost-content">
+                    <div class="input-group">
+                        <label for="frost-zone" data-i18n="frost_zone_label">Frost Zone (Frostzone)</label>
+                        <select id="frost-zone">
+                            <option value="1" data-i18n="zone_1">Zone I (Low)</option>
+                            <option value="2" data-i18n="zone_2">Zone II (Medium)</option>
+                            <option value="3" data-i18n="zone_3">Zone III (High)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="load-class" data-i18n="load_class_label">Load Class (Belastungsklasse)</label>
+                        <select id="load-class">
+                            <option value="light" data-i18n="load_light">Light (Private/Walkway)</option>
+                            <option value="medium" selected data-i18n="load_medium">Medium (Driveway/Residential)
+                            </option>
+                            <option value="heavy" data-i18n="load_heavy">Heavy (Industrial/Road)</option>
+                        </select>
+                    </div>
+
+                    <div class="info-box" id="recommendation-box">
+                        <small>
+                            <span data-i18n="rec_total_depth">Recommended Total Depth (RStO):</span>
+                            <span class="tooltip-icon" data-tooltip="tooltip_rsto">?</span>
+                            <span id="rec-total-depth">--</span> cm
+                        </small>
+                    </div>
+
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label for="fss-thickness">
+                            <span data-i18n="frost_thickness_label">Frost Layer Thickness (Schotter)</span>
+                            <span class="tooltip-icon" data-tooltip="tooltip_frost">?</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="number" id="fss-thickness" placeholder="Calculated..." min="0" step="1">
+                            <span class="unit">cm</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- VISUAL CROSS-SECTION -->
+            <div class="visual-container">
+                <label data-i18n="cross_section_label">Cross-Section Preview</label>
+                <div class="layers-view">
+                    <div id="layer-asphalt" class="layer asphalt-layer"><span>Asphalt</span></div>
+                    <div id="layer-frost" class="layer frost-layer"><span>Frost Layer</span></div>
+                    <div class="layer ground-layer"><span>Subgrade</span></div>
+                </div>
+            </div>
+
+            <div class="result-area" id="result-area">
+                <div class="result-label" data-i18n="asphalt_weight_label">Asphalt Weight</div>
+                <div class="result-value"><span id="result">0.00</span> <span class="unit-large">t</span></div>
+                <div class="result-sub"><span data-i18n="volume_sub">Volume:</span> <span id="volume">0.00</span> m³
+                </div>
+                <div class="result-sub"><span data-i18n="total_cost_sub">Total Cost:</span> <span id="total-cost"
+                        style="color: var(--success-color); font-weight: 700;">0.00</span> €</div>
+
+                <!-- ADDED FROST RESULTS -->
+                <div id="frost-result-container"
+                    style="display:none; margin-top: 20px; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.2);">
+                    <div class="result-label" style="color: #cbd5e1;" data-i18n="frost_weight_label">Frost Layer
+                        Required</div>
+                    <div class="result-value" style="font-size: 2rem;"><span id="frost-weight">0.00</span> <span
+                            class="unit-large">t</span></div>
+                    <div class="result-sub"><span data-i18n="volume_sub">Volume:</span> <span
+                            id="frost-volume">0.00</span> m³</div>
+
+                </div>
+
+                <!-- LOGISTICS CALCULATOR -->
+                <div class="logistics-section">
+                    <div class="result-label" style="color: var(--accent-color); margin-top: 20px;"
+                        data-i18n="logistics_label">Logistics Estimator
+                    </div>
+                    <div class="input-group" style="margin-bottom: 10px;">
+                        <select id="truck-type">
+                            <option value="12">Small Tipper (12t)</option>
+                            <option value="18">Medium Tipper (18t)</option>
+                            <option value="25" selected>Semi-Trailer (25t)</option>
+                        </select>
+                    </div>
+                    <div class="truck-results">
+                        <div class="truck-icon">🚛</div>
+                        <div class="truck-count">
+                            <span id="trucks-asphalt">0</span> <small data-i18n="asphalt_trips">Asphalt Trips</small>
+                        </div>
+                        <div class="truck-count" id="trucks-frost-container" style="display:none;">
+                            <span id="trucks-frost">0</span> <small data-i18n="gravel_trips">Gravel Trips</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="exportPDF()" data-i18n="download_pdf">Download PDF
+                        Report</button>
+                    <button class="action-btn secondary" onclick="printPage()" data-i18n="print_page">Print</button>
+                    <button class="action-btn secondary" onclick="emailResults()" data-i18n="email_results">Email
+                        Quote</button>
+                </div>
+
+                <!-- History Section -->
+                <div class="history-section">
+                    <h3 data-i18n="history_label">Calculation History</h3>
+                    <div id="history-list"></div>
+                    <button class="clear-btn" onclick="clearHistory()" data-i18n="clear_history">Clear History</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer style="text-align: center; color: var(--text-secondary); padding: 20px; font-size: 0.9rem;">
+        Made by <span style="color: var(--accent-color); font-weight: 600;">Mehdi Lakhouane</span>
+    </footer>
+    <script src="translations.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

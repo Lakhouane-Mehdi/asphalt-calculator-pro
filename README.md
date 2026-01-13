@@ -1,64 +1,51 @@
-# Asphalt Calculator Pro (Asphalt Rechner)
+# Smart Field: Asphalt Calculator & Construction Assistant
 
-A professional web-based tool designed for construction professionals and DIY enthusiasts to calculate asphalt tonnage, volume, and costs with precision. Includes RStO 12 frost protection layer calculations.
+**Built by Mehdi Lakhouane**
 
-**Live Demo:** [https://asphalt-calculator-eight.vercel.app](https://asphalt-calculator-eight.vercel.app)
+A next-generation PWA (Progressive Web App) designed for paving professionals, civil engineers, and site foremen. This tool combines standard asphalt calculations with advanced German technical standards (RStO), logistics planning, and environmental impact tracking.
 
-## 🚀 Features
+## 🚀 Key Features
 
-### Core Calculation
-- **Dual Shape Support**: Calculate for Rectagular (Length × Width) or Circular (Diameter) areas.
-- **Accurate Tonnage**: Uses precise density formulas (default 2.4 t/m³) to estimate required asphalt weight.
-- **Waste Factor (Verschnitt)**: Integrated safety margin input (e.g., +5%) to ensure you order enough material.
-- **Cost Estimation**: Estimates total material cost based on custom or regional average prices (DE, AT, CH).
+### 1. Smart Asphalt Calculator
+- **German Standards Integration (RStO 12 / ZTV Asphalt):**
+  - Pre-defined material types (AC TD, AC B, SMA, MA) with specific densities.
+  - **Auto-Validation:** Warns users if layer thickness violates technical norms (e.g., "⚠️ Norm: 3-5 cm" for Deckschicht).
+  - **Frost Zones:** Zone I, II, and III adjustments.
+- **Compaction Reality Check:**
+  - Toggle between "Loose" (Screed) and "Compacted" (Finished) thickness.
+  - "Est. Loose Laydown" hints to guide the screed operator.
+- **Voice Input:** Hands-free data entry for field usage.
 
-### Professional Tools
-- **RStO 12 Integration**: Calculates required Frost Protection Layers (Frostschutzschicht) based on German Load Classes (Bk) and Frost Zones.
-- **Logistics Estimator**: Auto-calculates the number of trucks needed (12t, 18t, 25t) for your project.
-- **Bilingual Interface**: Fully localized for **English** and **German**.
+### 2. Jobsite Logistics
+- **Truck Cycle Planner:** Calculates the number of trucks required to maintain continuous paver operation based on plant rate, cycle time, and truck capacity.
+- **Cooling Predictor (Einbaufenster):** Estimates the time available for compaction based on mix temperature, air temperature, and wind speed. Includes visual warnings for rapid cooling conditions.
 
-### Productivity
-- **Project History**: Automatically saves your recent calculations (Project Name, Date, Weight, Cost) locally.
-- **PDF Export**: Generate professional PDF reports with project details.
-- **Email & Print**: Send quotes via email or print a clean, ink-friendly summary.
-- **Visual Cross-Section**: Dynamic visualization of the asphalt and frost layers.
+### 3. Sustainability & Compliance
+- **Green Asphalt Tools:** Tracks CO2 footprint and potential binder savings from RAP (Recycled Asphalt Pavement) usage.
+- **Professional Quotes:** Generates and exports branded PDF quotes/estimates directly from the mobile device.
 
-## 🛠 Tech Stack
+### 4. Field-Ready Tech
+- **PWA Support:** Installable on iOS/Android (offline capable).
+- **Vision Measurement:** (Beta) AR and camera-based tools for estimation.
+- **Multi-Language:** Fully localized for English (International) and German (DACH region).
 
-- **Frontend**: HTML5, Modern CSS3 (Variables, Animations), JavaScript (ES6+).
-- **Backend**: Node.js, Express (for secure calculation logic and frost zone APIs).
-- **Hosting**: Vercel (Serverless Functions).
-- **Libraries**: `jspdf` & `jspdf-autotable` for PDF generation.
+## 🛠️ Tech Stack
+- **Framework:** Next.js 15 (App Router)
+- **Styling:** Tailwind CSS + shadcn/ui components
+- **Icons:** Lucide React
+- **PDF Generation:** jsPDF / AutoTable
+- **Deployment:** Vercel (Edge Network)
 
-## 📦 Installation (Local)
+## 📦 Getting Started
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Amazigh24/asphalt-calculator-pro.git
-   cd asphalt-calculator-pro
-   ```
+```bash
+# Install dependencies
+npm install
 
-2. **Install Dependencies**
-   ```bash
-   npm install
-   ```
+# Run development server
+npm run dev
+# Open http://localhost:3000
+```
 
-3. **Run Development Server**
-   ```bash
-   node server.js
-   ```
-   Open `http://localhost:3000` in your browser.
-
-## 📝 Usage
-
-1. Enter a **Project Name**.
-2. Select your **Shape** (Rectangle or Circle) and enter dimensions.
-3. Choose your **Asphalt Type** (Surface, Binder, Base) to auto-set density.
-4. (Optional) Enable **Frost Protection** to calculate the sub-base.
-5. Review the **Results**, **Logistics**, and **Cost**.
-6. **Export PDF** or **Email** the results.
-
----
-
-**Author**: Mehdi Lakhouane
-**Version**: 2.0.0
+## 📄 License
+Property of Mehdi Lakhouane. All rights reserved.
