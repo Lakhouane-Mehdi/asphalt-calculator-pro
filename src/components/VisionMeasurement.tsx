@@ -94,7 +94,6 @@ export default function VisionMeasurement() {
                         <Camera className="h-12 w-12 text-gray-400" />
                         <Button
                             onClick={() => setIsCameraActive(true)}
-                            variant="default"
                             className="bg-purple-600 hover:bg-purple-700"
                         >
                             Start Camera
