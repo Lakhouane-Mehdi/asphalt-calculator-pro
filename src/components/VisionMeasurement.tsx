@@ -15,6 +15,7 @@ export default function VisionMeasurement() {
     const [image, setImage] = useState<string | null>(null);
     const [points, setPoints] = useState<{ x: number; y: number }[]>([]);
     const [calculatedArea, setCalculatedArea] = useState<number | null>(null);
+    const [isCameraActive, setIsCameraActive] = useState(false);
 
     const webcamRef = useRef<Webcam>(null);
     const canvasRef = useRef<HTMLDivElement>(null);
@@ -24,6 +25,7 @@ export default function VisionMeasurement() {
         if (webcamRef.current) {
             const imageSrc = webcamRef.current.getScreenshot();
             setImage(imageSrc);
+            setIsCameraActive(false); // Stop camera processing when image is captured
         }
     }, [webcamRef]);
 
@@ -43,6 +45,7 @@ export default function VisionMeasurement() {
         setImage(null);
         setPoints([]);
         setCalculatedArea(null);
+        setIsCameraActive(true); // Reactivate camera for retake
     };
 
     // Shoelace Formula for Area
@@ -85,7 +88,22 @@ export default function VisionMeasurement() {
 
             <CardContent className="space-y-4">
 
-                {!image ? (
+                {!isCameraActive && !image ? (
+                    /* Inactive State */
+                    <div className="relative rounded-xl overflow-hidden bg-black/5 aspect-[4/3] flex flex-col items-center justify-center gap-4 border-2 border-dashed border-gray-300">
+                        <Camera className="h-12 w-12 text-gray-400" />
+                        <Button
+                            onClick={() => setIsCameraActive(true)}
+                            variant="default"
+                            className="bg-purple-600 hover:bg-purple-700"
+                        >
+                            Start Camera
+                        </Button>
+                        <p className="text-xs text-muted-foreground text-center px-8">
+                            Camera permission required to measure area.
+                        </p>
+                    </div>
+                ) : !image ? (
                     /* Camera View */
                     <div className="relative rounded-xl overflow-hidden bg-black aspect-[4/3] flex items-center justify-center">
                         <Webcam

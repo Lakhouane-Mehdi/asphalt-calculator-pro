@@ -140,8 +140,8 @@ self.__SERVER_FILES_MANIFEST={
       "isExperimentalCompile": false
     }
   },
-  "appDir": "C:\\Users\\roto2\\AsphaltCalculator\\smart-field-temp",
-  "relativeAppDir": "AsphaltCalculator\\smart-field-temp",
+  "appDir": "C:\\Users\\roto2\\AsphaltCalculator",
+  "relativeAppDir": "AsphaltCalculator",
   "files": [
     ".next\\routes-manifest.json",
     ".next\\server\\pages-manifest.json",
