@@ -14,6 +14,7 @@ import CalculatorHeader from "./calculator/CalculatorHeader";
 import SpecsForm from "./calculator/SpecsForm";
 import ResultCards from "./calculator/ResultCards";
 import PricingSection from "./calculator/PricingSection";
+import PDFReportButton from "./calculator/PDFReportButton";
 
 export default function AsphaltCalculator() {
     const { t } = useLanguage();
@@ -100,6 +101,9 @@ export default function AsphaltCalculator() {
                                         <span className="text-sm font-semibold">{t('calculationsVerified')}</span>
                                     </div>
                                 </div>
+                                <div className="pt-2">
+                                    <PDFReportButton />
+                                </div>
                             </div>
                         )}
                     </div>
@@ -135,6 +139,6 @@ export default function AsphaltCalculator() {
                     </div>
                 </CardContent>
             </Card>
-        </div>
+        </div >
     );
 }

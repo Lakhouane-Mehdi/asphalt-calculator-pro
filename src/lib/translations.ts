@@ -94,7 +94,8 @@ export const translations = {
         essentialCookiesDesc: "Always active. Needed for the app to function correctly.",
         analyticsCookies: "Analytics (Anonymous)",
         analyticsCookiesDesc: "Helps us understand from which countries our users come from.",
-        apply: "Apply Selection"
+        apply: "Apply Selection",
+        downloadReport: "Download PDF Report"
     },
     de: {
         title: "Schnellkalkulation",
@@ -189,6 +190,7 @@ export const translations = {
         essentialCookiesDesc: "Immer aktiv. Notwendig für die ordnungsgemäße Funktion der App.",
         analyticsCookies: "Analyse (Anonym)",
         analyticsCookiesDesc: "Hilft uns zu verstehen, aus welchen Ländern unsere Nutzer kommen.",
-        apply: "Auswahl anwenden"
+        apply: "Auswahl anwenden",
+        downloadReport: "Einbauprotokoll herunterladen (PDF)"
     }
 };
