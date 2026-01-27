@@ -5,6 +5,7 @@ import Webcam from "react-webcam";
 import { Camera, X, RotateCcw, Check, ScanLine } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Standard Credit Card Dimensions
 const CARD_WIDTH_MM = 85.6;
@@ -12,6 +13,7 @@ const CARD_WIDTH_MM = 85.6;
 const REF_BOX_WIDTH_PX = 200;
 
 export default function VisionMeasurement() {
+    const { t } = useLanguage();
     const [image, setImage] = useState<string | null>(null);
     const [points, setPoints] = useState<{ x: number; y: number }[]>([]);
     const [calculatedArea, setCalculatedArea] = useState<number | null>(null);
@@ -81,8 +83,8 @@ export default function VisionMeasurement() {
                     <ScanLine className="h-6 w-6" />
                 </div>
                 <div>
-                    <h2 className="text-xl font-bold">Smart Measurement</h2>
-                    <p className="text-xs text-muted-foreground">Photo-to-Area (Beta)</p>
+                    <h2 className="text-xl font-bold">{t('vision.title')}</h2>
+                    <p className="text-xs text-muted-foreground">{t('vision.subtitle')}</p>
                 </div>
             </CardHeader>
 
@@ -96,10 +98,10 @@ export default function VisionMeasurement() {
                             onClick={() => setIsCameraActive(true)}
                             className="bg-purple-600 hover:bg-purple-700"
                         >
-                            Start Camera
+                            {t('vision.startCamera')}
                         </Button>
                         <p className="text-xs text-muted-foreground text-center px-8">
-                            Camera permission required to measure area.
+                            {t('vision.permission')}
                         </p>
                     </div>
                 ) : !image ? (
@@ -119,7 +121,7 @@ export default function VisionMeasurement() {
                             style={{ width: `${REF_BOX_WIDTH_PX}px`, height: `${REF_BOX_WIDTH_PX / 1.58}px` }} // AR ~1.58 for cards
                         >
                             <div className="text-[10px] text-green-500 font-bold bg-black/50 px-2 py-1 rounded">
-                                Align Credit Card Here
+                                {t('vision.alignCard')}
                             </div>
                         </div>
 
@@ -153,18 +155,18 @@ export default function VisionMeasurement() {
                             </svg>
 
                             <div className="absolute top-2 left-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded">
-                                Tap corner points of damage
+                                {t('vision.tapCorners')}
                             </div>
                         </div>
 
                         <div className="flex items-center justify-between gap-2">
                             <Button onClick={reset} variant="ghost" size="sm" className="text-red-400 hover:bg-red-950/20">
-                                <RotateCcw className="h-4 w-4 mr-1" /> Retake
+                                <RotateCcw className="h-4 w-4 mr-1" /> {t('vision.retake')}
                             </Button>
 
                             {calculatedArea !== null ? (
                                 <div className="flex flex-col items-end">
-                                    <span className="text-xs text-muted-foreground">Measured Area</span>
+                                    <span className="text-xs text-muted-foreground">{t('vision.measuredArea')}</span>
                                     <span className="text-xl font-bold text-purple-400">{calculatedArea} m²</span>
                                 </div>
                             ) : (
@@ -173,7 +175,7 @@ export default function VisionMeasurement() {
                                     disabled={points.length < 3}
                                     className="bg-purple-600 hover:bg-purple-700"
                                 >
-                                    <Check className="h-4 w-4 mr-2" /> Calculate Area
+                                    <Check className="h-4 w-4 mr-2" /> {t('vision.calculate')}
                                 </Button>
                             )}
                         </div>

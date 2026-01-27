@@ -22,7 +22,19 @@ export default function AdminDashboard() {
     const fetchStats = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/analytics/stats');
+            // Securely send PIN in headers (never rely on client-side check alone!)
+            const res = await fetch('/api/analytics/stats', {
+                headers: {
+                    'x-admin-pin': ADMIN_PIN
+                }
+            });
+
+            if (res.status === 401) {
+                alert("Session Expired or Invalid PIN");
+                setIsAuthenticated(false);
+                return;
+            }
+
             const data = await res.json();
             if (data.stats) {
                 setStats(data.stats);
