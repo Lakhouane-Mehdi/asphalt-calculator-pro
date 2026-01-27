@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import CookieBanner from "@/components/ui/CookieBanner";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -38,7 +40,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.className} antialiased`}>
-        {children}
+        <LanguageProvider>
+          {children}
+          <CookieBanner />
+        </LanguageProvider>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

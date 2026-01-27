@@ -1,81 +1,89 @@
 "use client";
 
-import { HardHat } from "lucide-react";
+import { useState } from "react";
+import {
+  Calculator, Truck, Leaf, Thermometer,
+  Maximize, Layers
+} from "lucide-react";
 import AsphaltCalculator from "@/components/AsphaltCalculator";
 import TruckLogistics from "@/components/TruckLogistics";
 import SustainabilityTools from "@/components/SustainabilityTools";
+import CoolingPredictor from "@/components/CoolingPredictor";
 import VisionMeasurement from "@/components/VisionMeasurement";
 import AROverlay from "@/components/AROverlay";
-import CoolingPredictor from "@/components/CoolingPredictor";
-import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
+import Navbar from "@/components/Navbar";
+import { useLanguage, LanguageProvider } from "@/contexts/LanguageContext";
 
-function LanguageToggle() {
-  const { language, setLanguage, t } = useLanguage();
-  return (
-    <div className="flex items-center gap-2 bg-secondary/50 rounded-lg p-1">
-      <button
-        onClick={() => setLanguage('en')}
-        className={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${language === 'en' ? 'bg-primary text-black' : 'text-muted-foreground hover:text-foreground'}`}
-      >
-        EN
-      </button>
-      <button
-        onClick={() => setLanguage('de')}
-        className={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${language === 'de' ? 'bg-primary text-black' : 'text-muted-foreground hover:text-foreground'}`}
-      >
-        DE
-      </button>
-    </div>
-  );
-}
-
-function PageContent() {
-  const { t } = useLanguage();
-
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-4 bg-background relative overflow-x-hidden">
-
-      {/* Header / Nav */}
-      <div className="z-10 w-full max-w-2xl mx-auto flex items-center justify-between py-6 mb-8">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-amber-600 shadow-lg shadow-amber-500/20 flex items-center justify-center">
-            <HardHat className="h-6 w-6 text-black" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold leading-none tracking-tight">Smart Field</h1>
-            <p className="text-[10px] text-muted-foreground font-medium tracking-wide uppercase">Asphalt Calculator</p>
-            <p className="text-[10px] text-primary/80 font-semibold tracking-tight">Made by Mehdi Lakhouane</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <LanguageToggle />
-          <button className="text-xs font-semibold px-4 py-2 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors">
-            {t('settings')}
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="z-10 w-full mb-24 space-y-4">
-        <AsphaltCalculator />
-        <TruckLogistics />
-        <CoolingPredictor />
-        <SustainabilityTools />
-        <VisionMeasurement />
-        <AROverlay />
-      </div>
-
-      <p className="relative z-10 text-xs text-muted-foreground/50 mt-12 text-center pb-8 font-medium hover:text-primary transition-colors cursor-default">
-        {t('madeBy')}
-      </p>
-    </main>
-  );
-}
+type ToolId = 'calculator' | 'logistics' | 'sustainability' | 'cooling' | 'vision' | 'ar';
 
 export default function Home() {
+  return <HomeContent />;
+}
+
+function HomeContent() {
+  const { t } = useLanguage();
+  const [activeTool, setActiveTool] = useState<ToolId>('calculator');
+
+  const tools = [
+    { id: 'calculator', icon: Calculator, label: t('title'), component: AsphaltCalculator },
+    { id: 'logistics', icon: Truck, label: t('logistics.title'), component: TruckLogistics },
+    { id: 'sustainability', icon: Leaf, label: t('sustainability.title'), component: SustainabilityTools },
+    { id: 'cooling', icon: Thermometer, label: t('cooling.title'), component: CoolingPredictor },
+    { id: 'vision', icon: Maximize, label: "Vision", component: VisionMeasurement },
+    { id: 'ar', icon: Layers, label: "AR Overlay", component: AROverlay },
+  ];
+
+  const ActiveComponent = tools.find(t => t.id === activeTool)?.component || AsphaltCalculator;
+
   return (
-    <LanguageProvider>
-      <PageContent />
-    </LanguageProvider>
+    <main className="min-h-screen bg-background text-foreground selection:bg-primary/30">
+      <Navbar />
+
+      <div className="max-w-7xl mx-auto px-4 pt-24 pb-32">
+        {/* Dashboard Tabs - Desktop */}
+        <div className="hidden lg:flex items-center justify-center gap-2 mb-12 p-1 bg-secondary/50 rounded-2xl w-fit mx-auto border border-border">
+          {tools.map((tool) => (
+            <button
+              key={tool.id}
+              onClick={() => setActiveTool(tool.id as ToolId)}
+              className={`flex items-center gap-3 px-6 py-3 rounded-xl transition-all duration-300 ${activeTool === tool.id
+                ? 'bg-background text-primary shadow-sm scale-105 border border-border'
+                : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+                }`}
+            >
+              <tool.icon className={`h-5 w-5 ${activeTool === tool.id ? 'text-primary' : ''}`} />
+              <span className="font-semibold text-sm whitespace-nowrap">{tool.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Active Tool View */}
+        <div className="animate-in fade-in zoom-in-95 duration-500">
+          <ActiveComponent />
+        </div>
+      </div>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="lg:hidden fixed bottom-6 left-4 right-4 z-50">
+        <div className="bg-background/80 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-2xl rounded-3xl p-2 flex items-center justify-around">
+          {tools.map((tool) => (
+            <button
+              key={tool.id}
+              onClick={() => setActiveTool(tool.id as ToolId)}
+              className={`p-3 rounded-2xl transition-all duration-300 ${activeTool === tool.id
+                ? 'bg-primary text-primary-foreground scale-110 shadow-lg'
+                : 'text-muted-foreground'
+                }`}
+            >
+              <tool.icon className="h-6 w-6" />
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      {/* Subtle Gradient Backgrounds */}
+      <div className="fixed inset-0 pointer-events-none -z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent" />
+      <div className="fixed inset-0 pointer-events-none -z-10 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-blue-500/5 via-transparent to-transparent" />
+    </main>
   );
 }

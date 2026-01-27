@@ -1,16 +1,16 @@
 import type { NextConfig } from "next";
+import withPWAInit from "@ducanh2912/next-pwa";
 
-// const withPWA = require("@ducanh2912/next-pwa").default({
-//   dest: "public",
-//   cacheOnFrontEndNav: true,
-//   aggressiveFrontEndNavCaching: true,
-//   reloadOnOnline: true,
-//   swcMinify: true,
-//   disable: process.env.NODE_ENV === "development",
-//   workboxOptions: {
-//     disableDevLogs: true,
-//   },
-// });
+const withPWA = withPWAInit({
+  dest: "public",
+  cacheOnFrontEndNav: true,
+  aggressiveFrontEndNavCaching: true,
+  reloadOnOnline: true,
+  disable: process.env.NODE_ENV === "development",
+  workboxOptions: {
+    disableDevLogs: true,
+  },
+});
 
 const nextConfig: NextConfig = {
   async headers() {
@@ -40,7 +40,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin'
+            value: 'strict-origin-when-cross-origin'
           },
           {
             key: 'Permissions-Policy',
@@ -48,7 +48,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; connect-src 'self';"
+            value: "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; connect-src 'self'; font-src 'self' data:;"
           }
         ]
       }
@@ -56,5 +56,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-// export default withPWA(nextConfig);
-export default nextConfig;
+export default withPWA(nextConfig);
