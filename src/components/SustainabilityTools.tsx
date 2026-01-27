@@ -6,36 +6,34 @@ import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+import { useStore } from "@/lib/store";
+
 export default function SustainabilityTools() {
     const { t } = useLanguage();
-    const [tonnage, setTonnage] = useState<string>("");
+    const { tonnage: storeTonnage } = useStore();
     const [rapPercentage, setRapPercentage] = useState<string>("0");
 
     const [co2Emission, setCo2Emission] = useState<number>(0);
     const [oilSaved, setOilSaved] = useState<number>(0);
 
     useEffect(() => {
-        const t = parseFloat(tonnage) || 0;
+        const tonnageVal = storeTonnage || 0;
         const rap = parseFloat(rapPercentage) || 0;
 
         // CO2 Calculation (Approx 25kg CO2 per ton of HMA)
-        // RAP reduces virgin binder needed, reducing CO2
         const baseCo2Factor = 25; // kg/ton
         const reductionFactor = rap / 100;
+        const factor = baseCo2Factor * (1 - (reductionFactor * 0.5));
 
-        // Simple model: RAP reduces impact by its percentage roughly (simplified)
-        const factor = baseCo2Factor * (1 - (reductionFactor * 0.5)); // Assume 50% efficiency in reduction
-
-        const emission = t * factor;
+        const emission = tonnageVal * factor;
 
         // Oil/Binder Saved
-        // Assumes 5% binder content. RAP replaces virgin binder.
         const binderContent = 0.05;
-        const binderSaved = t * binderContent * reductionFactor * 1000; // kg
+        const binderSaved = tonnageVal * binderContent * reductionFactor * 1000; // kg
 
         setCo2Emission(Math.round(emission));
         setOilSaved(Math.round(binderSaved));
-    }, [tonnage, rapPercentage]);
+    }, [storeTonnage, rapPercentage]);
 
     return (
         <Card className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
@@ -55,9 +53,10 @@ export default function SustainabilityTools() {
                         label={t('sustainability.totalTonnage')}
                         icon={Factory}
                         type="number"
-                        value={tonnage}
-                        onChange={(e) => setTonnage(e.target.value)}
+                        value={storeTonnage.toString()}
+                        onChange={() => { }} // Readonly as it comes from calculator
                         placeholder="e.g. 500"
+                        className="opacity-80"
                     />
                     <Input
                         label={t('sustainability.rapPercent')}
@@ -88,7 +87,7 @@ export default function SustainabilityTools() {
                             <span className="text-xs font-medium text-green-600">kg</span>
                         </div>
                         <p className="text-[10px] text-green-600/60 mt-1 flex items-center gap-1">
-                            {t('sustainability.basedOn')} {rapPercentage}% RAP
+                            {t('sustainability.basedOnRap', { percent: rapPercentage })}
                         </p>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ import { Truck, Timer, Activity, RotateCw } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { calculateLogistics } from "@/lib/calculations";
 
 export default function TruckLogistics() {
     const { t } = useLanguage();
@@ -16,26 +17,14 @@ export default function TruckLogistics() {
     const [loadInterval, setLoadInterval] = useState<number>(0);
 
     useEffect(() => {
-        const rate = parseFloat(plantRate) || 0;
-        const capacity = parseFloat(truckCapacity) || 0;
-        const time = parseFloat(cycleTime) || 0;
+        const results = calculateLogistics({
+            plantRate: parseFloat(plantRate) || 0,
+            truckCapacity: parseFloat(truckCapacity) || 0,
+            cycleTime: parseFloat(cycleTime) || 0,
+        });
 
-        if (rate > 0 && capacity > 0 && time > 0) {
-            // Logic:
-            // Trucks per hour needed = Rate / Capacity
-            // Interval (min) = 60 / Trucks per hour
-            // Total Trucks = Cycle Time / Interval
-
-            const trucksPerHour = rate / capacity;
-            const interval = 60 / trucksPerHour;
-            const trucks = Math.ceil(time / interval);
-
-            setLoadInterval(parseFloat(interval.toFixed(1)));
-            setTrucksRequired(trucks);
-        } else {
-            setTrucksRequired(0);
-            setLoadInterval(0);
-        }
+        setTrucksRequired(results.trucksRequired);
+        setLoadInterval(results.loadInterval);
     }, [plantRate, truckCapacity, cycleTime]);
 
     return (

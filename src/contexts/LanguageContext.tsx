@@ -2,12 +2,12 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { translations, Language } from '@/lib/translations';
+import { getTranslation } from '@/lib/i18n';
 
 interface LanguageContextType {
     language: Language;
     setLanguage: (lang: Language) => void;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    t: (key: keyof typeof translations['en'] | string) => any;
+    t: (key: string, params?: Record<string, string | number>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -15,20 +15,9 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const [language, setLanguage] = useState<Language>('en');
 
-    // Helper to access nested keys (simple implementation for depth 1 or 2)
-    const t = (key: string) => {
-        const keys = key.split('.');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let value: any = translations[language];
-
-        for (const k of keys) {
-            if (value && typeof value === 'object' && k in value) {
-                value = value[k as keyof typeof value];
-            } else {
-                return key; // Fallback to key if not found
-            }
-        }
-        return value;
+    // Enhanced translation function with interpolation
+    const t = (key: string, params?: Record<string, string | number>) => {
+        return getTranslation(language, key, params);
     };
 
     return (

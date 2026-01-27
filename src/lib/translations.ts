@@ -61,7 +61,8 @@ export const translations = {
             co2: "CO2 Footprint",
             emissions: "Est. Emissions",
             binderSaved: "Virgin Binder Saved",
-            basedOn: "Based on"
+            basedOn: "Based on",
+            basedOnRap: "Based on {{percent}}% RAP"
         },
         units: {
             length: "m",
@@ -69,7 +70,31 @@ export const translations = {
             density: "t/m³",
             tonnage: "t",
             area: "m²"
-        }
+        },
+        step: "Step",
+        of: "of",
+        back: "Back",
+        next: "Next",
+        projectDetails: "Project",
+        dimensions: "Dimensions",
+        material: "Material",
+        summary: "Summary",
+        calculationsVerified: "Calculations Verified",
+        trafficClass: "Traffic Class (RStO 12)",
+        recommendedStructure: "Recommended Structure",
+        thicknessWarning: "Note: RStO recommendation overrides current values",
+        none: "None",
+        privacyTitle: "Privacy in Focus",
+        privacyDescription: "We value your privacy. We use cookies to improve your experience and analyze our traffic. In accordance with German TDDDG, we only track anonymous country data after your explicit consent.",
+        custom: "Custom",
+        rejectAll: "Reject All",
+        acceptAll: "Accept All",
+        settingsTitle: "Cookie Settings",
+        essentialCookies: "Essential Cookies",
+        essentialCookiesDesc: "Always active. Needed for the app to function correctly.",
+        analyticsCookies: "Analytics (Anonymous)",
+        analyticsCookiesDesc: "Helps us understand from which countries our users come from.",
+        apply: "Apply Selection"
     },
     de: {
         title: "Schnellkalkulation",
@@ -131,7 +156,8 @@ export const translations = {
             co2: "CO2 Fußabdruck",
             emissions: "Geschätzte Emissionen",
             binderSaved: "Eingespartes Bitumen",
-            basedOn: "Basierend auf"
+            basedOn: "Basierend auf",
+            basedOnRap: "Basiert auf {{percent}}% Ausbauasphalt"
         },
         units: {
             length: "m",
@@ -139,6 +165,30 @@ export const translations = {
             density: "t/m³",
             tonnage: "t",
             area: "m²"
-        }
+        },
+        step: "Schritt",
+        of: "von",
+        back: "Zurück",
+        next: "Weiter",
+        projectDetails: "Projekt",
+        dimensions: "Maße",
+        material: "Material",
+        summary: "Vorschau",
+        calculationsVerified: "Berechnung geprüft",
+        trafficClass: "Belastungsklasse (RStO 12)",
+        recommendedStructure: "Empfohlener Aufbau",
+        thicknessWarning: "Hinweis: RStO-Empfehlung überschreibt aktuelle Werte",
+        none: "Keine",
+        privacyTitle: "Datenschutz im Fokus",
+        privacyDescription: "Wir schätzen Ihre Privatsphäre. Wir verwenden Cookies, um Ihr Erlebnis zu verbessern und unseren Datenverkehr zu analysieren. In Übereinstimmung mit dem deutschen TDDDG erfassen wir anonyme Länderdaten nur nach Ihrer ausdrücklichen Zustimmung.",
+        custom: "Anpassen",
+        rejectAll: "Alle ablehnen",
+        acceptAll: "Alle akzeptieren",
+        settingsTitle: "Cookie-Einstellungen",
+        essentialCookies: "Notwendige Cookies",
+        essentialCookiesDesc: "Immer aktiv. Notwendig für die ordnungsgemäße Funktion der App.",
+        analyticsCookies: "Analyse (Anonym)",
+        analyticsCookiesDesc: "Hilft uns zu verstehen, aus welchen Ländern unsere Nutzer kommen.",
+        apply: "Auswahl anwenden"
     }
 };

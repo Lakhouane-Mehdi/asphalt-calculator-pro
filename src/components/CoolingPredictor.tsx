@@ -5,6 +5,7 @@ import { Thermometer, Wind, Clock, AlertTriangle } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { predictCoolingTime } from "@/lib/calculations";
 
 export default function CoolingPredictor() {
     const { t, language } = useLanguage();
@@ -18,37 +19,12 @@ export default function CoolingPredictor() {
     const [timeAvailable, setTimeAvailable] = useState<number>(0);
 
     useEffect(() => {
-        const mix = parseFloat(mixTemp) || 0;
-        const air = parseFloat(airTemp) || 0;
-        const wind = parseFloat(windSpeed) || 0;
-
-        // Cessation Temp (compaction stops) ~ 80°C
-        const cessationTemp = 80;
-
-        if (mix > cessationTemp) {
-            // Simplified Cooling Model (Empirical approx)
-            // Base cooling rate varies by delta T
-            const deltaT = mix - air;
-
-            // Wind factor: each 5km/h adds ~15% cooling speed
-            const windFactor = 1 + (wind / 30);
-
-            // Arbitrary decay constant approximation for 4cm layer
-            // This is a "rule of thumb" estimation, not thermodynamic simulation
-            // A 4cm layer might take 40-60 mins to cool from 160 to 80 in favorable conditions
-
-            // "Base minutes" = Delta T * Factor
-            // This is purely heuristic for the "Smart Field" demo feel
-            const coolingRatePerMin = (deltaT * 0.02) * windFactor;
-
-            const tempDiff = mix - cessationTemp;
-            const mins = tempDiff / coolingRatePerMin;
-
-            setTimeAvailable(Math.max(0, Math.floor(mins)));
-        } else {
-            setTimeAvailable(0);
-        }
-
+        const time = predictCoolingTime({
+            mixTemp: parseFloat(mixTemp) || 0,
+            airTemp: parseFloat(airTemp) || 0,
+            windSpeed: parseFloat(windSpeed) || 0,
+        });
+        setTimeAvailable(time);
     }, [mixTemp, airTemp, windSpeed]);
 
     return (
