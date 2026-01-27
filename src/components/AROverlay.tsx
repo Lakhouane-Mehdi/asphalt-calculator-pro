@@ -5,8 +5,10 @@ import Webcam from "react-webcam";
 import { Cuboid, Eye, EyeOff } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AROverlay() {
+    const { t } = useLanguage();
     const [active, setActive] = useState(false);
 
     // Transformation State
@@ -24,13 +26,13 @@ export default function AROverlay() {
                         <Cuboid className="h-6 w-6" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-bold">AR Visualizer</h2>
-                        <p className="text-xs text-muted-foreground">Virtual Grid Overlay</p>
+                        <h2 className="text-xl font-bold">{t('ar.title')}</h2>
+                        <p className="text-xs text-muted-foreground">{t('ar.subtitle')}</p>
                     </div>
                 </div>
                 <Button onClick={toggleAR} variant={active ? "secondary" : "outline"} size="sm">
                     {active ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
-                    {active ? "Close AR" : "View AR"}
+                    {active ? t('ar.close') : t('ar.view')}
                 </Button>
             </CardHeader>
 
@@ -61,7 +63,7 @@ export default function AROverlay() {
                                 <div className="w-4 h-4 bg-blue-500 rounded-full shadow-[0_0_20px_rgba(59,130,246,1)]" />
                             </div>
                             <div className="absolute bottom-2 right-2 text-blue-300 text-xs font-mono bg-black/50 px-2 rounded">
-                                Grid: ~0.5m Tiles
+                                {t('ar.gridLabel')}
                             </div>
                         </div>
 
@@ -69,7 +71,7 @@ export default function AROverlay() {
                         <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-4 space-y-2 backdrop-blur-sm">
                             <div className="space-y-1">
                                 <label className="text-[10px] text-white flex justify-between">
-                                    <span>Tilt (Perspective)</span> <span>{tilt}°</span>
+                                    <span>{t('ar.tilt')}</span> <span>{tilt}°</span>
                                 </label>
                                 <input
                                     type="range" min="0" max="90"
@@ -79,7 +81,7 @@ export default function AROverlay() {
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[10px] text-white flex justify-between">
-                                    <span>Height</span> <span>{verticalOffset}</span>
+                                    <span>{t('ar.height')}</span> <span>{verticalOffset}</span>
                                 </label>
                                 <input
                                     type="range" min="-200" max="200"
@@ -91,7 +93,7 @@ export default function AROverlay() {
                     </div>
 
                     <p className="text-xs text-center text-muted-foreground">
-                        Adjust Tilt & Height to align the grid with the floor.
+                        {t('ar.instruction')}
                     </p>
                 </CardContent>
             )}

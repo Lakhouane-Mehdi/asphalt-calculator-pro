@@ -29,8 +29,8 @@ function HomeContent() {
     { id: 'logistics', icon: Truck, label: t('logistics.title'), component: TruckLogistics },
     { id: 'sustainability', icon: Leaf, label: t('sustainability.title'), component: SustainabilityTools },
     { id: 'cooling', icon: Thermometer, label: t('cooling.title'), component: CoolingPredictor },
-    { id: 'vision', icon: Maximize, label: "Vision", component: VisionMeasurement },
-    { id: 'ar', icon: Layers, label: "AR Overlay", component: AROverlay },
+    { id: 'vision', icon: Maximize, label: t('vision.title'), component: VisionMeasurement },
+    { id: 'ar', icon: Layers, label: t('ar.title'), component: AROverlay },
   ];
 
   const ActiveComponent = tools.find(t => t.id === activeTool)?.component || AsphaltCalculator;

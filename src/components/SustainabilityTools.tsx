@@ -55,7 +55,7 @@ export default function SustainabilityTools() {
                         type="number"
                         value={storeTonnage.toString()}
                         onChange={() => { }} // Readonly as it comes from calculator
-                        placeholder="e.g. 500"
+                        placeholder={t('placeholders.tonnage')}
                         className="opacity-80"
                     />
                     <Input

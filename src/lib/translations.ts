@@ -35,6 +35,7 @@ export const translations = {
             thickness: "0.0",
             density: "2.4",
             price: "Price / Ton",
+            tonnage: "e.g. 500",
             plantRate: "e.g. 150",
             truckInfo: "e.g. 20",
             cycleTime: "e.g. 60",
@@ -63,6 +64,37 @@ export const translations = {
             binderSaved: "Virgin Binder Saved",
             basedOn: "Based on",
             basedOnRap: "Based on {{percent}}% RAP"
+        },
+        cooling: {
+            title: "Cooling Predictor",
+            subtitle: "Time until cessation (80°C)",
+            mixTemp: "Mix Temp (°C)",
+            airTemp: "Air Temp (°C)",
+            windSpeed: "Wind (km/h)",
+            timeAvailable: "Time Available",
+            coreTempNote: "Until core temp < 80°C",
+            warning: "Warning: Rapid compaction required!"
+        },
+        vision: {
+            title: "Smart Measurement",
+            subtitle: "Photo-to-Area (Beta)",
+            startCamera: "Start Camera",
+            permission: "Camera permission required to measure area.",
+            alignCard: "Align Credit Card Here",
+            tapCorners: "Tap corner points of damage",
+            retake: "Retake",
+            measuredArea: "Measured Area",
+            calculate: "Calculate Area"
+        },
+        ar: {
+            title: "AR Visualizer",
+            subtitle: "Virtual Grid Overlay",
+            view: "View AR",
+            close: "Close AR",
+            gridLabel: "Grid: ~0.5m Tiles",
+            tilt: "Tilt (Perspective)",
+            height: "Height",
+            instruction: "Adjust Tilt & Height to align the grid with the floor."
         },
         units: {
             length: "m",
@@ -131,6 +163,7 @@ export const translations = {
             thickness: "0,0",
             density: "2,4",
             price: "Preis / Tonne",
+            tonnage: "z.B. 500",
             plantRate: "z.B. 150",
             truckInfo: "z.B. 20",
             cycleTime: "z.B. 60",
@@ -159,6 +192,37 @@ export const translations = {
             binderSaved: "Eingespartes Bitumen",
             basedOn: "Basierend auf",
             basedOnRap: "Basiert auf {{percent}}% Ausbauasphalt"
+        },
+        cooling: {
+            title: "Einbaufenster",
+            subtitle: "Zeit bis Verdichtungsende (80°C)",
+            mixTemp: "Mischgut (°C)",
+            airTemp: "Luft (°C)",
+            windSpeed: "Wind (km/h)",
+            timeAvailable: "Verfügbare Zeit",
+            coreTempNote: "Bis Kerntemperatur < 80°C",
+            warning: "Achtung: Schnelle Verdichtung nötig!"
+        },
+        vision: {
+            title: "Smart Aufmaß",
+            subtitle: "Foto-zu-Fläche (Beta)",
+            startCamera: "Kamera starten",
+            permission: "Kamerazugriff erforderlich.",
+            alignCard: "Kreditkarte hier ausrichten",
+            tapCorners: "Eckpunkte des Schadens antippen",
+            retake: "Wiederholen",
+            measuredArea: "Gemessene Fläche",
+            calculate: "Fläche berechnen"
+        },
+        ar: {
+            title: "AR Visualisierung",
+            subtitle: "Virtuelles Gitter-Overlay",
+            view: "AR ansehen",
+            close: "AR schließen",
+            gridLabel: "Gitter: ~0,5m Kacheln",
+            tilt: "Neigung",
+            height: "Höhe",
+            instruction: "Neigung & Höhe anpassen um Gitter am Boden auszurichten."
         },
         units: {
             length: "m",

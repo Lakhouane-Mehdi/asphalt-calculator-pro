@@ -3,8 +3,14 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: Request) {
     try {
+        // Security Check: Verify Admin PIN
+        const pin = request.headers.get('x-admin-pin');
+        if (pin !== '2024') { // In production, use process.env.ADMIN_PIN
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         // Aggregate users by country
         // 100000% Private: Just counting country codes, no IPs.
         const result = await sql`
