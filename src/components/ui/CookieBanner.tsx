@@ -42,7 +42,10 @@ export default function CookieBanner() {
             fetch('/api/analytics', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ consent: newConsent })
+                body: JSON.stringify({
+                    consent: newConsent,
+                    consentVersion: "1.0" // Compliance: Track agreed policy version
+                })
             }).catch(err => console.error('Analytics failed:', err));
         }
 

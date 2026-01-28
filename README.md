@@ -2,7 +2,7 @@
 
 **Built by Mehdi Lakhouane**
 
-A next-generation PWA (Progressive Web App) designed for paving professionals, civil engineers, and site foremen. This tool combines standard asphalt calculations with advanced German technical standards (RStO), logistics planning, and environmental impact tracking.
+A next-generation PWA (Progressive Web App) designed for paving professionals, civil engineers, and site foremen. This tool combines standard asphalt calculations with advanced German technical standards (RStO), logistics planning, environmental impact tracking, and enterprise-grade reporting.
 
 ## 🚀 Key Features
 
@@ -14,27 +14,40 @@ A next-generation PWA (Progressive Web App) designed for paving professionals, c
 - **Compaction Reality Check:**
   - Toggle between "Loose" (Screed) and "Compacted" (Finished) thickness.
   - "Est. Loose Laydown" hints to guide the screed operator.
-- **Voice Input:** Hands-free data entry for field usage.
 
-### 2. Jobsite Logistics
-- **Truck Cycle Planner:** Calculates the number of trucks required to maintain continuous paver operation based on plant rate, cycle time, and truck capacity.
-- **Cooling Predictor (Einbaufenster):** Estimates the time available for compaction based on mix temperature, air temperature, and wind speed. Includes visual warnings for rapid cooling conditions.
+### 2. Enterprise Features (Senior Upgrade)
+- **Admin Dashboard:**
+  - Real-time visualization of anonymous user country data.
+  - Accessible at `/admin` (Secured via PIN).
+- **Official Field Reports ("Einbauprotokoll"):**
+  - Generates signed, professional PDF reports for the construction site manager.
+  - Includes all project specs, calculated values, and signature lines.
+- **Analytics API:**
+  - Server-side PIN-protected API (`x-admin-pin`) excludes PII and ensures data privacy.
 
-### 3. Sustainability & Compliance
-- **Green Asphalt Tools:** Tracks CO2 footprint and potential binder savings from RAP (Recycled Asphalt Pavement) usage.
-- **Professional Quotes:** Generates and exports branded PDF quotes/estimates directly from the mobile device.
+### 3. Jobsite Logistics & Environment
+- **Truck Cycle Planner:** Calculates fleet requirements based on plant rate and cycle time.
+- **Cooling Predictor (Einbaufenster):** Estimates compaction time window based on weather conditions (Mix/Air/Wind).
+- **Sustainability:** Tracks CO2 footprint and RAP (Recycled Asphalt) savings.
 
-### 4. Field-Ready Tech
-- **PWA Support:** Installable on iOS/Android (offline capable).
-- **Vision Measurement:** (Beta) AR and camera-based tools for estimation.
-- **Multi-Language:** Fully localized for English (International) and German (DACH region).
+### 4. Legal & Localization
+- **Deep Localization:** 100% German/English toggle support (including AR/Vision tools).
+- **TDDDG Compliance:** Advanced Cookie Banner with granular consent (Essential vs Analytics).
+- **Legal Pages:** Fully compliant **Impressum** and **Datenschutzerklärung**.
 
-## 🛠️ Tech Stack
+## 🛠️ Security & Architecture
+
+### Security Hardening ("Unhackable")
+- **Server-Side Validation:** Admin API endpoints are protected by server-side PIN checks.
+- **Vulnerability Patching:** All critical npm dependencies audited and patched.
+- **Header Security:** Strict headers for PWA and API communication.
+
+### Tech Stack
 - **Framework:** Next.js 15 (App Router)
-- **Styling:** Tailwind CSS + shadcn/ui components
-- **Icons:** Lucide React
-- **PDF Generation:** jsPDF / AutoTable
-- **Deployment:** Vercel (Edge Network)
+- **Styling:** Tailwind CSS + shadcn/ui
+- **Database:** Vercel Postgres (Anonymous Analytics)
+- **Reporting:** jsPDF / AutoTable
+- **Deployment:** Vercel
 
 ## 📦 Getting Started
 
