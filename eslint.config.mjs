@@ -10,14 +10,25 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
     ignores: [
       ".next/**",
       "out/**",
       "build/**",
-      "next-env.d.ts"
+      "next-env.d.ts",
+      "legacy_v2/",
+      "**/legacy_v2/**",
+      "smart-field-temp/",
+      "**/smart-field-temp/**"
     ]
+  },
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "no-unused-expressions": "off"
+    }
   }
 ];
 

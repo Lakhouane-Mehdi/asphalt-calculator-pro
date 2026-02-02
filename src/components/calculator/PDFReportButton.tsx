@@ -3,7 +3,7 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Button } from "@/components/ui/Button";
-import { FileDown, FileCheck } from "lucide-react";
+import { FileCheck } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useStore } from "@/lib/store";
 
