@@ -27,6 +27,7 @@ export const translations = {
         settings: "Settings",
         language: "Language",
         madeBy: "Made by Mehdi Lakhouane",
+        madeByShort: "by Mehdi L.",
         placeholders: {
             project: "e.g. Main Street Overlay",
             client: "e.g. City Council",
@@ -155,6 +156,7 @@ export const translations = {
         settings: "Einstellungen",
         language: "Sprache",
         madeBy: "Entwickelt von Mehdi Lakhouane",
+        madeByShort: "von Mehdi L.",
         placeholders: {
             project: "z.B. Hauptstraße Sanierung",
             client: "z.B. Stadtverwaltung",
