@@ -23,9 +23,10 @@ export default function Navbar() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1 mr-2 sm:mr-4 text-[9px] sm:text-[10px] text-muted-foreground font-medium uppercase tracking-widest bg-secondary/50 px-2 sm:px-3 py-1.5 rounded-full border border-border/50">
-                        <Info className="h-3 w-3" />
-                        {t('madeBy')}
+                    <div className="flex items-center gap-1 mr-2 sm:mr-4 text-[9px] sm:text-[10px] text-muted-foreground font-medium uppercase tracking-widest bg-secondary/50 px-2 sm:px-3 py-1.5 rounded-full border border-border/50 whitespace-nowrap">
+                        <Info className="h-3 w-3 flex-shrink-0" />
+                        <span className="hidden sm:inline">{t('madeBy')}</span>
+                        <span className="inline sm:hidden">{t('madeByShort')}</span>
                     </div>
 
                     <Button
