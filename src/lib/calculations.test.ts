@@ -15,6 +15,17 @@ describe('Asphalt Calculations', () => {
         expect(result.area).toBe(100);
     });
 
+    it('handles zero values appropriately', () => {
+        const result = calculateAsphalt({
+            length: 0,
+            width: 0,
+            thickness: 0,
+            density: 2.4
+        });
+        expect(result.tonnage).toBe(0);
+        expect(result.area).toBe(0);
+    });
+
     it('handles loose laydown with compaction factor', () => {
         const result = calculateAsphalt({
             length: 10,
@@ -38,6 +49,37 @@ describe('Cooling Prediction', () => {
         const time = predictCoolingTime({ mixTemp: 160, airTemp: 20, windSpeed: 0 });
         expect(time).toBeGreaterThan(20);
         expect(time).toBeLessThan(120);
+    });
+
+    it('handles extreme weather conditions', () => {
+        // Very cold and windy -> fast cooling
+        const fastCooling = predictCoolingTime({ mixTemp: 160, airTemp: -10, windSpeed: 50 });
+        // Warm and calm -> slow cooling
+        const slowCooling = predictCoolingTime({ mixTemp: 160, airTemp: 30, windSpeed: 0 });
+
+        expect(fastCooling).toBeLessThan(slowCooling);
+    });
+
+    it('handles invalid inputs gracefully', () => {
+        const result = calculateLogistics({
+            plantRate: 0,
+            truckCapacity: 20,
+            cycleTime: 60
+        });
+        expect(result.trucksRequired).toBe(0);
+        expect(result.loadInterval).toBe(0);
+    });
+
+    it('calculates correct trucks for uneven splits', () => {
+        const result = calculateLogistics({
+            plantRate: 150,
+            truckCapacity: 20,
+            cycleTime: 60
+        });
+        // 150 TPH / 20t = 7.5 trucks/hr -> 8 min interval
+        // 60 min cycle / 8 min = 7.5 -> 8 trucks required
+        expect(result.trucksRequired).toBe(8);
+        expect(result.loadInterval).toBe(8.0);
     });
 });
 

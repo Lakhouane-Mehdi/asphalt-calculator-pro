@@ -83,6 +83,11 @@ export default function CoolingPredictor() {
                         {t('cooling.warning')}
                     </div>
                 )}
+
+                <div className="mt-4 p-3 bg-secondary/30 rounded-lg border border-border/50 text-[10px] text-muted-foreground leading-relaxed">
+                    <p className="font-semibold mb-1">Disclaimer</p>
+                    <p>This calculation is a heuristic estimate based on standard cooling rates. Actual cooling times may vary due to humidity, ground temperature, and layer thickness. Always verify with a core thermometer.</p>
+                </div>
             </CardContent>
         </Card>
     );
