@@ -1,6 +1,12 @@
 {
-  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/_global-error/page": "app/_global-error/page.js",
   "/_not-found/page": "app/_not-found/page.js",
+  "/admin/page": "app/admin/page.js",
   "/api/analytics/route": "app/api/analytics/route.js",
+  "/api/analytics/stats/route": "app/api/analytics/stats/route.js",
+  "/api/setup-db/route": "app/api/setup-db/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/legal/impressum/page": "app/legal/impressum/page.js",
+  "/legal/privacy/page": "app/legal/privacy/page.js",
   "/page": "app/page.js"
 }
