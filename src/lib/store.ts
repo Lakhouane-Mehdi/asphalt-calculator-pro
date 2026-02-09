@@ -45,6 +45,7 @@ interface AppState {
     thickness: string;
     density: string;
     isLoose: boolean;
+    compactionFactor: number;
 
     // Calculator Results (Computed)
     tonnage: number;
@@ -57,6 +58,7 @@ interface AppState {
     setClientName: (name: string) => void;
     setIsLoose: (loose: boolean) => void;
     setPricePerTon: (price: string) => void;
+    setCompactionFactor: (factor: number) => void;
     setSpecs: (specs: Partial<Pick<AppState, 'length' | 'width' | 'thickness' | 'density'>>) => void;
 }
 
@@ -78,6 +80,7 @@ export const useStore = create<AppState>((set, get) => {
             thickness: parseInput(s.thickness),
             density: parseInput(s.density),
             isLoose: s.isLoose,
+            compactionFactor: s.compactionFactor,
         });
 
         const p = parseInput(s.pricePerTon);
@@ -94,6 +97,7 @@ export const useStore = create<AppState>((set, get) => {
         thickness: '',
         density: '2.4',
         isLoose: false,
+        compactionFactor: 1.25, // Default for Asphalt
         tonnage: 0,
         area: 0,
         totalCost: 0,
@@ -112,6 +116,9 @@ export const useStore = create<AppState>((set, get) => {
             if (/^[\d,.]*$/.test(pricePerTon)) {
                 set((state) => ({ ...state, pricePerTon, ...runCalculations({ pricePerTon }) }));
             }
+        },
+        setCompactionFactor: (compactionFactor) => {
+            set((state) => ({ ...state, compactionFactor, ...runCalculations({ compactionFactor }) }));
         },
         setSpecs: (specs) => {
             // Internal validation for numeric strings

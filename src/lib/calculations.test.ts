@@ -38,6 +38,20 @@ describe('Asphalt Calculations', () => {
         // 10 * 10 * 0.04 * 2.4 = 9.6
         expect(result.tonnage).toBe(9.6);
     });
+
+    it('handles custom compaction factor (e.g. Concrete/Paving)', () => {
+        const result = calculateAsphalt({
+            length: 10,
+            width: 10,
+            thickness: 5, // loose/screed input
+            density: 2.4,
+            isLoose: true,
+            compactionFactor: 1.0 // No compaction
+        });
+        // Thickness stays 5
+        // 10 * 10 * 0.05 * 2.4 = 12.0
+        expect(result.tonnage).toBe(12.0);
+    });
 });
 
 describe('Cooling Prediction', () => {

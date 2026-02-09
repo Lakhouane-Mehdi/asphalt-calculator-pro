@@ -3,7 +3,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useStore } from "@/lib/store";
 import { generateQuote } from "@/lib/quote-generator";
-import { germanStandards } from "@/lib/standards";
 
 export function useExportQuote() {
     const { language } = useLanguage();

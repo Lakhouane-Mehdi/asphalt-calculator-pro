@@ -40,8 +40,7 @@ export default function PDFReportButton() {
 
         // --- Technical Specs ---
         autoTable(doc, {
-            // @ts-ignore
-            startY: doc.lastAutoTable.finalY + 10,
+            startY: (doc as any).lastAutoTable?.finalY ? (doc as any).lastAutoTable.finalY + 10 : 40,
             head: [[t('dimensions') || 'Dimensions & Specs', 'Value']],
             body: [
                 [`${t('length')} (${t('units.length')})`, store.length],
@@ -56,8 +55,7 @@ export default function PDFReportButton() {
 
         // --- Results ---
         autoTable(doc, {
-            // @ts-ignore
-            startY: doc.lastAutoTable.finalY + 10,
+            startY: (doc as any).lastAutoTable?.finalY ? (doc as any).lastAutoTable.finalY + 10 : 40,
             head: [[t('summary') || 'Calculated Requirements', 'Total']],
             body: [
                 [{ content: `${t('tonnage')} (${t('units.tonnage')})`, styles: { fontStyle: 'bold' } }, { content: store.tonnage.toString(), styles: { fontStyle: 'bold', textColor: [255, 0, 0] } }],
