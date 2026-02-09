@@ -19,7 +19,10 @@ const eslintConfig = [
       "legacy_v2/",
       "**/legacy_v2/**",
       "smart-field-temp/",
-      "**/smart-field-temp/**"
+      "**/smart-field-temp/**",
+      "public/sw.js",
+      "public/workbox-*.js",
+      "public/swe-worker-*.js"
     ]
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
