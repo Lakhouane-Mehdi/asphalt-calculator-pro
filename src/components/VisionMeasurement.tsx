@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
+import Image from "next/image";
 import Webcam from "react-webcam";
-import { Camera, X, RotateCcw, Check, ScanLine } from "lucide-react";
+import { Camera, RotateCcw, Check, ScanLine } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -56,7 +57,7 @@ export default function VisionMeasurement() {
 
         // 1. Calculate Area in Pixels
         let areaPx = 0;
-        const j = points.length - 1;
+        // const j = points.length - 1;
 
         for (let i = 0; i < points.length; i++) {
             const p1 = points[i];
@@ -141,7 +142,7 @@ export default function VisionMeasurement() {
                             className="relative rounded-xl overflow-hidden bg-black aspect-[4/3] cursor-crosshair select-none"
                         >
                             {/* Captured Image */}
-                            <img src={image} alt="Capture" className="absolute inset-0 w-full h-full object-cover opacity-80" />
+                            <Image src={image} alt="Capture" fill className="absolute inset-0 object-cover opacity-80" />
 
                             {/* SVG Overlay for Polygons */}
                             <svg className="absolute inset-0 w-full h-full pointer-events-none">

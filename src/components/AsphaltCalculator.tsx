@@ -21,7 +21,7 @@ export default function AsphaltCalculator() {
     const {
         projectName, setProjectName,
         clientName, setClientName,
-        isLoose, setIsLoose,
+
         tonnage
     } = useStore();
 

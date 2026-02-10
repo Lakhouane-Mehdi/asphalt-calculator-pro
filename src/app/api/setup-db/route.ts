@@ -16,7 +16,7 @@ export async function GET() {
         // Check if column exists, if not add it (for existing tables)
         try {
             await sql`ALTER TABLE user_country_stats ADD COLUMN IF NOT EXISTS consent_version VARCHAR(10) DEFAULT '1.0';`;
-        } catch (ignored) {
+        } catch {
             // Error likely means column exists or table just created
         }
 

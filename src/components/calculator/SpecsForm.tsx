@@ -62,7 +62,7 @@ export default function SpecsForm({ step }: SpecsFormProps) {
         if (std) {
             // Only update density if it's not custom (custom allows manual edit)
             if (selectedStandard !== 'custom') {
-                setDensity(std.density.toString());
+                setSpecs({ density: std.density.toString() });
             }
             // Update compaction factor logic
             const factor = 1 + (std.compactionOffset || 0);
@@ -73,7 +73,7 @@ export default function SpecsForm({ step }: SpecsFormProps) {
                 setIsLoose(false);
             }
         }
-    }, [selectedStandard, selectedCategory]); // Re-run if category changes (though standard usually changes too)
+    }, [selectedStandard, selectedCategory, isLoose, setCompactionFactor, setSpecs, setIsLoose]); // Re-run if category changes (though standard usually changes too)
 
     if (step === 'dimensions') {
         return (

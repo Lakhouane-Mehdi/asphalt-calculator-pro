@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import Webcam from "react-webcam";
 import { Cuboid, Eye, EyeOff } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
@@ -13,7 +13,7 @@ export default function AROverlay() {
 
     // Transformation State
     const [tilt, setTilt] = useState(60); // Degrees (Start looking down)
-    const [scale, setScale] = useState(1); // Visual scale
+    const [scale] = useState(1); // Visual scale
     const [verticalOffset, setVerticalOffset] = useState(0); // Move grid up/down screen
 
     const toggleAR = () => setActive(!active);

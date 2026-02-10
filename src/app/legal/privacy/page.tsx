@@ -1,6 +1,6 @@
 "use client";
 
-import { useLanguage } from "@/contexts/LanguageContext";
+
 import Navbar from "@/components/Navbar";
 
 export default function PrivacyPolicy() {

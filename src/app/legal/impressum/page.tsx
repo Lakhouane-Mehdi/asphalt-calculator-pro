@@ -4,7 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 
 export default function Impressum() {
-    const { t } = useLanguage();
+    useLanguage();
 
     return (
         <main className="min-h-screen bg-background text-foreground">
