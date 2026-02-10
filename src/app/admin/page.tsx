@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import { BarChart3, Lock, RefreshCcw } from 'lucide-react';
 
@@ -120,11 +121,14 @@ export default function AdminDashboard() {
                                     <div key={stat.country_code} className="space-y-2">
                                         <div className="flex justify-between text-sm">
                                             <span className="font-bold flex items-center gap-2">
-                                                <img
-                                                    src={`https://flagcdn.com/24x18/${stat.country_code.toLowerCase()}.png`}
-                                                    alt={stat.country_code}
-                                                    className="rounded-sm"
-                                                />
+                                                <div className="relative w-6 h-[18px]">
+                                                    <Image
+                                                        src={`https://flagcdn.com/24x18/${stat.country_code.toLowerCase()}.png`}
+                                                        alt={stat.country_code}
+                                                        fill
+                                                        className="rounded-sm object-cover"
+                                                    />
+                                                </div>
                                                 {stat.country_code === 'Unknown' ? 'Global / Unknown' : stat.country_code}
                                             </span>
                                             <span className="text-muted-foreground">{stat.count} users</span>

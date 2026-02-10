@@ -12,7 +12,7 @@ import CoolingPredictor from "@/components/CoolingPredictor";
 import VisionMeasurement from "@/components/VisionMeasurement";
 import AROverlay from "@/components/AROverlay";
 import Navbar from "@/components/Navbar";
-import { useLanguage, LanguageProvider } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type ToolId = 'calculator' | 'logistics' | 'sustainability' | 'cooling' | 'vision' | 'ar';
 
