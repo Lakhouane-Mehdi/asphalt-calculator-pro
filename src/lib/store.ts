@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { z } from 'zod';
 import { calculateAsphalt } from './calculations';
 
@@ -64,7 +65,7 @@ interface AppState {
 
 // --- Store Implementation ---
 
-export const useStore = create<AppState>((set, get) => {
+export const useStore = create<AppState>()(persist((set, get) => {
     const runCalculations = (state: Partial<AppState>) => {
         const parseInput = (val: string) => {
             if (!val) return 0;
@@ -128,4 +129,4 @@ export const useStore = create<AppState>((set, get) => {
             }
         },
     };
-});
+}, { name: 'asphalt-calculator-store' }));
