@@ -15,6 +15,7 @@ import SpecsForm from "./calculator/SpecsForm";
 import ResultCards from "./calculator/ResultCards";
 import PricingSection from "./calculator/PricingSection";
 import PDFReportButton from "./calculator/PDFReportButton";
+import SignaturePad from "./calculator/SignaturePad";
 
 export default function AsphaltCalculator() {
     const { t } = useLanguage();
@@ -26,6 +27,7 @@ export default function AsphaltCalculator() {
     } = useStore();
 
     const [currentStep, setCurrentStep] = useState<number>(1);
+    const [signatureData, setSignatureData] = useState<string | null>(null);
     const totalSteps = 4;
 
     const { handleExport } = useExportQuote();
@@ -36,7 +38,7 @@ export default function AsphaltCalculator() {
     return (
         <div className="w-full max-w-2xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Card className="overflow-hidden border-none shadow-2xl bg-background/50 backdrop-blur-xl">
-                <CalculatorHeader onExport={handleExport} />
+                <CalculatorHeader onExport={() => handleExport(signatureData)} />
 
                 {/* Mode Toggle */}
                 <div className="px-6 pt-6 pb-2">
@@ -121,12 +123,13 @@ export default function AsphaltCalculator() {
                             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
                                 <ResultCards />
                                 <PricingSection />
-                                <div className="flex justify-center pt-4">
+                                <div className="flex justify-center pt-2 pb-4">
                                     <div className="flex items-center gap-2 text-green-500 bg-green-500/10 px-4 py-2 rounded-full border border-green-500/20">
                                         <CheckCircle2 className="h-5 w-5" />
                                         <span className="text-sm font-semibold">{t('calculationsVerified')}</span>
                                     </div>
                                 </div>
+                                <SignaturePad onSave={setSignatureData} />
                                 <div className="pt-2">
                                     <PDFReportButton />
                                 </div>
@@ -155,7 +158,7 @@ export default function AsphaltCalculator() {
                             </Button>
                         ) : (
                             <Button
-                                onClick={handleExport}
+                                onClick={() => handleExport(signatureData)}
                                 className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/20 rounded-xl"
                                 disabled={tonnage <= 0}
                             >

@@ -5,13 +5,11 @@ interface QuoteData {
     projectName: string;
     clientName: string;
     date: string;
+    signatureData?: string;
     specs: {
         length: string;
         width: string;
-        thickness: string;
-        density: string;
-        materialType?: string;
-        pricePerTon?: string;
+        layers: any[];
     };
     language?: 'en' | 'de';
     results: {
@@ -26,35 +24,29 @@ export function generateQuote(data: QuoteData) {
     const doc = new jsPDF();
 
     // --- Branding / Header ---
-    // Background accent - Amber Gradient effect (simulated with rects)
     doc.setFillColor(245, 158, 11); // Amber-500
     doc.rect(0, 0, 210, 45, "F");
 
-    // Title
-    doc.setTextColor(0, 0, 0); // Black text
+    doc.setTextColor(0, 0, 0);
     doc.setFontSize(28);
     doc.setFont("helvetica", "bold");
     doc.text("Smart Field", 20, 22);
 
-    // Credit - Next to Title (User Request)
     doc.setFontSize(10);
-    doc.setFont("helvetica", "bold"); // Bold for credit
-    doc.setTextColor(50, 50, 50); // Slightly softer black
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(50, 50, 50);
     doc.text("Made by Mehdi Lakhouane", 20, 38);
 
-    // Date in Header (Right aligned)
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(0, 0, 0);
     doc.text(`Date: ${data.date}`, 150, 22);
 
-    // Subtitle / App Description
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
     doc.text("Professional Asphalt Calculator", 20, 30);
 
     // --- Client / Project Info ---
-    // Separator Line
     doc.setDrawColor(200, 200, 200);
     doc.line(20, 55, 190, 55);
 
@@ -69,18 +61,20 @@ export function generateQuote(data: QuoteData) {
     doc.text(`Client: ${data.clientName || "Valued Client"}`, 20, 88);
 
     // --- Specs Table ---
-    // Enhanced styles
-    const tableHeaderColor: [number, number, number] = [30, 41, 59]; // Slate-800
-    const costHeaderColor: [number, number, number] = [217, 119, 6]; // Amber-600
+    const tableHeaderColor: [number, number, number] = [30, 41, 59];
+    const costHeaderColor: [number, number, number] = [217, 119, 6];
 
-    const specsBody = [
-        ["Length", `${data.specs.length} m`],
-        ["Width", `${data.specs.width} m`],
-        ["Thickness", `${data.specs.thickness} cm`],
-        ["Density", `${data.specs.density} t/m³`],
-        ...(data.specs.materialType ? [["Material Type", data.specs.materialType]] : []),
-        ["Total Area", `${data.results.area} m²`],
+    let specsBody: string[][] = [
+        ["Total Length", `${data.specs.length} m`],
+        ["Total Width", `${data.specs.width} m`],
+        ["Total Area", `${data.results.area} m²`]
     ];
+
+    if (data.specs.layers && data.specs.layers.length > 0) {
+        data.specs.layers.forEach((layer, index) => {
+            specsBody.push([`Layer ${index + 1}: ${layer.name || 'Custom'}`, `Thickness: ${layer.thickness}cm | Density: ${layer.density}t/m³ | Tonnage: ${layer.tonnage}t`]);
+        });
+    }
 
     autoTable(doc, {
         startY: 100,
@@ -89,20 +83,22 @@ export function generateQuote(data: QuoteData) {
         theme: "striped",
         headStyles: { fillColor: tableHeaderColor, textColor: 255, fontStyle: 'bold' },
         styles: { fontSize: 10, cellPadding: 5 },
-        columnStyles: { 0: { fontStyle: 'bold', cellWidth: 40 } },
+        columnStyles: { 0: { fontStyle: 'bold', cellWidth: 50 } },
         margin: { left: 20 },
-        tableWidth: 80,
+        tableWidth: 170,
     });
 
     // --- Cost Table ---
     const costBody = [
-        ["Required Tonnage", `${data.results.tonnage} t`],
-        ["Price per Ton", `${data.language === 'de' ? '€' : '$'}${data.specs.pricePerTon || "0.00"}`],
+        ["Total Required Tonnage", `${data.results.tonnage} t`],
+        ["Price per Ton", `${data.language === 'de' ? '€' : '$'}${data.results.pricePerTon || "0.00"}`],
         ["TOTAL ESTIMATE", `${data.language === 'de' ? '€' : '$'}${data.results.totalCost}`],
     ];
 
+    const currentY = (doc as any).lastAutoTable.finalY + 15;
+
     autoTable(doc, {
-        startY: 100,
+        startY: currentY,
         head: [["Cost Breakdown", "Amount"]],
         body: costBody,
         theme: "grid",
@@ -113,10 +109,23 @@ export function generateQuote(data: QuoteData) {
         tableWidth: 80,
     });
 
+    // --- Signature ---
+    let signatureY = (doc as any).lastAutoTable.finalY + 20;
+
+    if (data.signatureData) {
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text("Authorized Signature:", 20, signatureY);
+        // Image parameters: string, format, x, y, width, height
+        doc.addImage(data.signatureData, "PNG", 20, signatureY + 5, 50, 20);
+
+        doc.setDrawColor(0, 0, 0);
+        doc.line(20, signatureY + 30, 80, signatureY + 30);
+    }
+
     // --- Footer ---
     const pageHeight = doc.internal.pageSize.height;
 
-    // Footer Background
     doc.setFillColor(245, 245, 245);
     doc.rect(0, pageHeight - 30, 210, 30, "F");
 
@@ -125,7 +134,6 @@ export function generateQuote(data: QuoteData) {
     doc.text("Generated by Smart Field App | Created by Mehdi Lakhouane", 20, pageHeight - 15);
     doc.text("This is an estimate only. Final requirements may vary based on site conditions.", 20, pageHeight - 10);
 
-    // Trigger Download
     const filename = `Quote_${data.projectName.replace(/\s+/g, "_") || "Asphalt_Project"}.pdf`;
     doc.save(filename);
 }

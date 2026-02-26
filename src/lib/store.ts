@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { z } from 'zod';
-import { calculateAsphalt } from './calculations';
+import { calculateTotal, AsphaltTonnageParams } from './calculations';
 
 // --- Validation Schemas ---
 
@@ -13,6 +13,11 @@ export const ProjectSchema = z.object({
 export const SpecsSchema = z.object({
     length: z.string().regex(/^[\d,.]*$/).max(20),
     width: z.string().regex(/^[\d,.]*$/).max(20),
+});
+
+export const LayerSchema = z.object({
+    id: z.string(),
+    name: z.string().max(100),
     thickness: z.string().regex(/^[\d,.]*$/).max(20),
     density: z.string().regex(/^[\d,.]*$/).max(20),
 });
@@ -33,6 +38,17 @@ export const SustainabilitySchema = z.object({
     rapPercent: z.string().regex(/^[\d,.]*$/).max(5),
 });
 
+export interface Layer {
+    id: string;
+    name: string;
+    thickness: string;
+    density: string;
+    isLoose: boolean;
+    compactionFactor: number;
+    // computed
+    tonnage: number;
+}
+
 // --- Store Interface ---
 
 interface AppState {
@@ -43,13 +59,12 @@ interface AppState {
     // Mode
     calculatorMode: 'worker' | 'engineer';
 
-    // Calculator Inputs
+    // Global Dimensions
     length: string;
     width: string;
-    thickness: string;
-    density: string;
-    isLoose: boolean;
-    compactionFactor: number;
+
+    // Layers (Multi-Layer Calc)
+    layers: Layer[];
 
     // Calculator Results (Computed)
     tonnage: number;
@@ -61,10 +76,15 @@ interface AppState {
     setProjectName: (name: string) => void;
     setClientName: (name: string) => void;
     setCalculatorMode: (mode: 'worker' | 'engineer') => void;
-    setIsLoose: (loose: boolean) => void;
+
+    // Global Specs
+    setSpecs: (specs: Partial<Pick<AppState, 'length' | 'width'>>) => void;
     setPricePerTon: (price: string) => void;
-    setCompactionFactor: (factor: number) => void;
-    setSpecs: (specs: Partial<Pick<AppState, 'length' | 'width' | 'thickness' | 'density'>>) => void;
+
+    // Layer Management
+    addLayer: (layer: Omit<Layer, 'id' | 'tonnage'>) => void;
+    updateLayer: (id: string, updates: Partial<Layer>) => void;
+    removeLayer: (id: string) => void;
 }
 
 // --- Store Implementation ---
@@ -79,19 +99,35 @@ export const useStore = create<AppState>()(persist((set, get) => {
 
         const s = { ...get(), ...state };
 
-        const results = calculateAsphalt({
-            length: parseInput(s.length),
-            width: parseInput(s.width),
-            thickness: parseInput(s.thickness),
-            density: parseInput(s.density),
-            isLoose: s.isLoose,
-            compactionFactor: s.compactionFactor,
+        const parsedLength = parseInput(s.length);
+        const parsedWidth = parseInput(s.width);
+
+        // Map UI layers to mathematical Layer inputs
+        const computationLayers: AsphaltTonnageParams[] = s.layers.map(l => ({
+            length: parsedLength,
+            width: parsedWidth,
+            thickness: parseInput(l.thickness),
+            density: parseInput(l.density),
+            isLoose: l.isLoose,
+            compactionFactor: l.compactionFactor
+        }));
+
+        const results = calculateTotal(computationLayers);
+
+        // Update individual layer tonnages
+        const updatedLayers = s.layers.map(l => {
+            const singleResult = calculateTotal([{
+                length: parsedLength, width: parsedWidth,
+                thickness: parseInput(l.thickness), density: parseInput(l.density),
+                isLoose: l.isLoose, compactionFactor: l.compactionFactor
+            }]);
+            return { ...l, tonnage: singleResult.tonnage };
         });
 
         const p = parseInput(s.pricePerTon);
         const totalCost = parseFloat((results.tonnage * p).toFixed(2));
 
-        return { ...results, totalCost };
+        return { ...results, totalCost, layers: updatedLayers };
     };
 
     return {
@@ -100,10 +136,9 @@ export const useStore = create<AppState>()(persist((set, get) => {
         calculatorMode: 'worker',
         length: '',
         width: '',
-        thickness: '',
-        density: '2.4',
-        isLoose: false,
-        compactionFactor: 1.25, // Default for Asphalt
+        layers: [{
+            id: 'layer-1', name: 'Layer 1', thickness: '', density: '2.4', isLoose: false, compactionFactor: 1.25, tonnage: 0
+        }],
         tonnage: 0,
         area: 0,
         totalCost: 0,
@@ -118,21 +153,42 @@ export const useStore = create<AppState>()(persist((set, get) => {
             if (result.success) set({ clientName: name });
         },
         setCalculatorMode: (calculatorMode) => set({ calculatorMode }),
-        setIsLoose: (isLoose) => set((state) => ({ ...state, isLoose, ...runCalculations({ isLoose }) })),
-        setPricePerTon: (pricePerTon) => {
-            if (/^[\d,.]*$/.test(pricePerTon)) {
-                set((state) => ({ ...state, pricePerTon, ...runCalculations({ pricePerTon }) }));
-            }
-        },
-        setCompactionFactor: (compactionFactor) => {
-            set((state) => ({ ...state, compactionFactor, ...runCalculations({ compactionFactor }) }));
-        },
+
         setSpecs: (specs) => {
-            // Internal validation for numeric strings
             const valid = Object.values(specs).every(v => typeof v === 'string' && /^[\d,.]*$/.test(v));
             if (valid) {
                 set((state) => ({ ...state, ...specs, ...runCalculations(specs) }));
             }
         },
+        setPricePerTon: (pricePerTon) => {
+            if (/^[\d,.]*$/.test(pricePerTon)) {
+                set((state) => ({ ...state, pricePerTon, ...runCalculations({ pricePerTon }) }));
+            }
+        },
+
+        // --- Layer Actions ---
+        addLayer: (layerArgs) => {
+            set((state) => {
+                const newLayer: Layer = {
+                    ...layerArgs,
+                    id: Math.random().toString(36).substring(7),
+                    tonnage: 0
+                };
+                const newLayers = [...state.layers, newLayer];
+                return { ...state, ...runCalculations({ layers: newLayers }) };
+            });
+        },
+        updateLayer: (id, updates) => {
+            set((state) => {
+                const newLayers = state.layers.map(l => l.id === id ? { ...l, ...updates } : l);
+                return { ...state, ...runCalculations({ layers: newLayers }) };
+            });
+        },
+        removeLayer: (id) => {
+            set((state) => {
+                const newLayers = state.layers.filter(l => l.id !== id);
+                return { ...state, ...runCalculations({ layers: newLayers }) };
+            });
+        }
     };
 }, { name: 'asphalt-calculator-store' }));
