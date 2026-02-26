@@ -1,11 +1,21 @@
 "use client";
 
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Hammer, Globe, Info } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Hammer, Globe, Info, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 export default function Navbar() {
     const { language, setLanguage, t } = useLanguage();
+    const [isSunlightMode, setIsSunlightMode] = useState(false);
+
+    useEffect(() => {
+        if (isSunlightMode) {
+            document.documentElement.classList.add('theme-sunlight');
+        } else {
+            document.documentElement.classList.remove('theme-sunlight');
+        }
+    }, [isSunlightMode]);
 
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 bg-background/50 backdrop-blur-xl border-b border-border/50">
@@ -31,8 +41,19 @@ export default function Navbar() {
                     <Button
                         variant="ghost"
                         size="sm"
+                        onClick={() => setIsSunlightMode(!isSunlightMode)}
+                        className={`gap-2 rounded-xl transition-all ${isSunlightMode ? 'bg-primary/20 text-primary' : 'hover:bg-primary/10 hover:text-primary'
+                            }`}
+                        title="Toggle High Contrast Sunlight Mode"
+                    >
+                        {isSunlightMode ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+                    </Button>
+
+                    <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => setLanguage(language === 'en' ? 'de' : 'en')}
-                        className="gap-2 rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+                        className="gap-2 rounded-xl hover:bg-primary/10 hover:text-primary transition-all ml-1"
                     >
                         <Globe className="h-4 w-4" />
                         <span className="font-bold text-xs uppercase">{language}</span>

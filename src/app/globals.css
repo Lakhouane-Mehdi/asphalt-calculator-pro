@@ -51,6 +51,29 @@
     --input: 240 3.7% 15.9%;
     --ring: 47.9 95.8% 53.1%;
   }
+
+  /* Ultra High Contrast (Sunlight Mode) */
+  .theme-sunlight {
+    --background: 0 0% 0%; /* Pure Black */
+    --foreground: 47.9 95.8% 53.1%; /* Bright Yellow/Amber */
+    --card: 0 0% 5%; /* Very Dark Grey */
+    --card-foreground: 47.9 95.8% 53.1%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 47.9 95.8% 53.1%;
+    --primary: 47.9 95.8% 53.1%; 
+    --primary-foreground: 0 0% 0%; 
+    --secondary: 47.9 95.8% 20%; /* Darker Amber for slight differentiation */
+    --secondary-foreground: 47.9 95.8% 53.1%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 47.9 95.8% 40%;
+    --accent: 47.9 95.8% 20%;
+    --accent-foreground: 47.9 95.8% 53.1%;
+    --destructive: 0 100% 50%; /* Pure Red */
+    --destructive-foreground: 0 0% 100%;
+    --border: 47.9 95.8% 53.1%; /* Yellow Borders everywhere */
+    --input: 47.9 95.8% 53.1%;
+    --ring: 47.9 95.8% 53.1%;
+  }
 }
 
 @layer base {

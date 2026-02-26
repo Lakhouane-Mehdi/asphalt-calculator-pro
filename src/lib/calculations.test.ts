@@ -1,53 +1,53 @@
 import { describe, it, expect } from 'vitest';
-import { calculateAsphalt, predictCoolingTime, calculateLogistics } from './calculations';
+import { calculateTotal, predictCoolingTime, calculateLogistics } from './calculations';
 
 describe('Asphalt Calculations', () => {
     it('calculates correct tonnage for standard compacted layer', () => {
-        const result = calculateAsphalt({
+        const result = calculateTotal([{
             length: 10,
             width: 10,
             thickness: 4,
             density: 2.4,
             isLoose: false
-        });
+        }]);
         // 10 * 10 * 0.04 * 2.4 = 9.6
         expect(result.tonnage).toBe(9.6);
         expect(result.area).toBe(100);
     });
 
     it('handles zero values appropriately', () => {
-        const result = calculateAsphalt({
+        const result = calculateTotal([{
             length: 0,
             width: 0,
             thickness: 0,
             density: 2.4
-        });
+        }]);
         expect(result.tonnage).toBe(0);
         expect(result.area).toBe(0);
     });
 
     it('handles loose laydown with compaction factor', () => {
-        const result = calculateAsphalt({
+        const result = calculateTotal([{
             length: 10,
             width: 10,
             thickness: 5,
             density: 2.4,
             isLoose: true
-        });
+        }]);
         // Thickness becomes 5 / 1.25 = 4cm
         // 10 * 10 * 0.04 * 2.4 = 9.6
         expect(result.tonnage).toBe(9.6);
     });
 
     it('handles custom compaction factor (e.g. Concrete/Paving)', () => {
-        const result = calculateAsphalt({
+        const result = calculateTotal([{
             length: 10,
             width: 10,
             thickness: 5, // loose/screed input
             density: 2.4,
             isLoose: true,
             compactionFactor: 1.0 // No compaction
-        });
+        }]);
         // Thickness stays 5
         // 10 * 10 * 0.05 * 2.4 = 12.0
         expect(result.tonnage).toBe(12.0);

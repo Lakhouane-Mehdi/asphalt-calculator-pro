@@ -8,21 +8,20 @@ export function useExportQuote() {
     const { language } = useLanguage();
     const {
         projectName, clientName, tonnage, area, totalCost,
-        length, width, thickness, density, pricePerTon
+        length, width, pricePerTon, layers
     } = useStore();
 
-    const handleExport = () => {
+    const handleExport = (signatureData: string | null) => {
         generateQuote({
             projectName,
             clientName,
             date: new Date().toLocaleDateString(language === 'de' ? 'de-DE' : 'en-US'),
             language,
+            signatureData: signatureData || undefined,
             specs: {
                 length,
                 width,
-                thickness,
-                density,
-                materialType: undefined // Can be refined if needed
+                layers,
             },
             results: {
                 area: area.toString(),

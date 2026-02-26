@@ -14,67 +14,47 @@ interface SpecsFormProps {
 
 export default function SpecsForm({ step }: SpecsFormProps) {
     const { t, language } = useLanguage();
+    // --- Multi-Layer Logic Refactor ---
     const {
-        length, width, thickness, density, setSpecs,
-        isLoose, setIsLoose, setCompactionFactor, compactionFactor,
+        length, width, setSpecs,
+        layers, addLayer, updateLayer, removeLayer,
         calculatorMode
     } = useStore();
 
     // Default to Asphalt for backward compatibility, or empty
     const [selectedCategory, setSelectedCategory] = useState<MaterialCategory>("asphalt");
     const [selectedStandard, setSelectedStandard] = useState<string>("custom");
-    const [selectedFrostZone, setSelectedFrostZone] = useState<string>("none");
-    const [selectedTrafficClass, setSelectedTrafficClass] = useState<string>("none");
 
     // Filter standards based on category
     const filteredStandards = germanStandards.filter(s => s.category === selectedCategory || s.id === 'custom');
 
     const setLength = (val: string) => setSpecs({ length: val });
     const setWidth = (val: string) => setSpecs({ width: val });
-    const setThickness = (val: string) => setSpecs({ thickness: val });
-    const setDensity = (val: string) => setSpecs({ density: val });
 
-    const handleCategoryChange = (cat: MaterialCategory) => {
+    const handleCategoryChange = (cat: MaterialCategory, layerId: string) => {
         setSelectedCategory(cat);
-        // Reset to custom or first available in category
         const firstInCat = germanStandards.find(s => s.category === cat);
         const newStd = firstInCat ? firstInCat.id : 'custom';
         setSelectedStandard(newStd);
 
-        // Disable traffic class if not asphalt
-        if (cat !== 'asphalt') {
-            setSelectedTrafficClass('none');
-        }
-    };
-
-    const handleTrafficClassChange = (tc: string) => {
-        setSelectedTrafficClass(tc);
-        if (tc !== "none") {
-            const structure = RStO12_Standards[tc as TrafficClass];
-            if (structure) {
-                setSpecs({ thickness: structure.totalThickness.toString() });
-            }
-        }
-    };
-
-    // Update global store when standard changes
-    useEffect(() => {
-        const std = germanStandards.find(s => s.id === selectedStandard);
+        const std = germanStandards.find(s => s.id === newStd);
         if (std) {
-            // Only update density if it's not custom (custom allows manual edit)
-            if (selectedStandard !== 'custom') {
-                setSpecs({ density: std.density.toString() });
-            }
-            // Update compaction factor logic
-            const factor = 1 + (std.compactionOffset || 0);
-            setCompactionFactor(factor);
-
-            // If factor is 1, force isLoose to false as it makes no difference
-            if (factor === 1 && isLoose) {
-                setIsLoose(false);
-            }
+            updateLayer(layerId, { name: std.name, density: std.density.toString(), compactionFactor: 1 + (std.compactionOffset || 0) });
         }
-    }, [selectedStandard, selectedCategory, isLoose, setCompactionFactor, setSpecs, setIsLoose]); // Re-run if category changes (though standard usually changes too)
+    };
+
+    const handleStandardChange = (stdId: string, layerId: string) => {
+        setSelectedStandard(stdId);
+        const std = germanStandards.find(s => s.id === stdId);
+        if (std) {
+            updateLayer(layerId, {
+                name: std.name,
+                density: std.id !== 'custom' ? std.density.toString() : '2.4',
+                compactionFactor: 1 + (std.compactionOffset || 0)
+            });
+        }
+    };
+
 
     if (step === 'dimensions') {
         return (
@@ -97,127 +77,108 @@ export default function SpecsForm({ step }: SpecsFormProps) {
                     onChange={(e) => setWidth(e.target.value)}
                     placeholder={t('placeholders.width')}
                 />
-                <div className="sm:col-span-2 space-y-1">
-                    <Input
-                        label={`${t('thickness')} (${t('units.thickness')})`}
-                        icon={Ruler}
-                        type="text"
-                        inputMode="decimal"
-                        value={thickness}
-                        onChange={(e) => setThickness(e.target.value)}
-                        placeholder={t('placeholders.thickness')}
-                    />
-
-                    {/* Only show compaction hints/toggle if factor > 1 (i.e. not concrete/paving) */}
-                    {compactionFactor > 1 && (
-                        <div className="flex items-center justify-between gap-2 px-1 pt-2">
-                            <p className="text-[10px] text-muted-foreground italic">
-                                {isLoose
-                                    ? `${t('estCompacted')}: ${(parseFloat(thickness.replace(',', '.')) / compactionFactor).toFixed(1)} cm`
-                                    : `${t('estLoose')}: ${(parseFloat(thickness.replace(',', '.')) * compactionFactor).toFixed(1)} cm`}
-                            </p>
-                            <div className="flex items-center gap-2">
-                                <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t('compaction')}:</label>
-                                <button
-                                    onClick={() => setIsLoose(!isLoose)}
-                                    className={`text-[10px] font-bold px-3 py-1 rounded-lg border transition-all ${isLoose
-                                        ? 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30'
-                                        : 'bg-secondary text-secondary-foreground border-border'}`}
-                                >
-                                    {isLoose ? t('loose') : t('compacted')}
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
             </div>
         );
     }
 
     return (
         <div className="space-y-6">
-            <div className="grid gap-6">
-                {calculatorMode === 'engineer' && (
-                    <>
-                        {/* Material Category Dropdown */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-medium text-muted-foreground">{t('materialCategory')}</label>
-                            <select
-                                value={selectedCategory}
-                                onChange={(e) => handleCategoryChange(e.target.value as MaterialCategory)}
-                                className="w-full bg-secondary/30 border border-border rounded-xl px-4 py-3 text-sm"
-                            >
-                                {materialCategories.map((cat) => (
-                                    <option key={cat.id} value={cat.id}>{t(cat.labelKey)}</option>
-                                ))}
-                            </select>
-                        </div>
 
-                        {/* Specific Standard Dropdown */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-medium text-muted-foreground">{t('materialType')}</label>
-                            <select
-                                value={selectedStandard}
-                                onChange={(e) => setSelectedStandard(e.target.value)}
-                                className="w-full bg-secondary/30 border border-border rounded-xl px-4 py-3 text-sm"
-                            >
-                                {filteredStandards.map((std) => (
-                                    <option key={std.id} value={std.id}>{std.name} {std.density > 0 ? `(${std.density} t/m³)` : ''}</option>
-                                ))}
-                            </select>
+            {layers.map((layer, index) => (
+                <div key={layer.id} className="relative p-5 rounded-2xl bg-card border shadow-sm">
+                    {layers.length > 1 && (
+                        <div className="absolute top-4 right-4 cursor-pointer text-destructive/80 hover:text-destructive" onClick={() => removeLayer(layer.id)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
                         </div>
+                    )}
 
-                        {/* Traffic Class (Only for Asphalt) */}
-                        {selectedCategory === 'asphalt' && (
-                            <div className="space-y-2">
-                                <label className="text-xs font-medium text-muted-foreground">{t('trafficClass')}</label>
-                                <select
-                                    value={selectedTrafficClass}
-                                    onChange={(e) => handleTrafficClassChange(e.target.value)}
-                                    className="w-full bg-secondary/30 border border-border rounded-xl px-4 py-3 text-sm"
-                                >
-                                    <option value="none">-- {t('none')} --</option>
-                                    {Object.keys(RStO12_Standards).map((tc) => (
-                                        <option key={tc} value={tc}>{tc}</option>
-                                    ))}
-                                </select>
-                                {selectedTrafficClass !== 'none' && (
-                                    <p className="text-[10px] text-primary font-medium pl-1">
-                                        {t('recommendedStructure')}: {RStO12_Standards[selectedTrafficClass as TrafficClass].totalThickness}cm (ZTV Asphalt-StB)
-                                    </p>
-                                )}
-                            </div>
+                    <div className="mb-4">
+                        <h4 className="text-sm font-semibold text-primary">Layer {index + 1}</h4>
+                    </div>
+
+                    <div className="grid gap-5">
+                        {calculatorMode === 'engineer' && (
+                            <>
+                                <div className="space-y-2">
+                                    <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">{t('materialCategory')}</label>
+                                    <select
+                                        value={selectedCategory}
+                                        onChange={(e) => handleCategoryChange(e.target.value as MaterialCategory, layer.id)}
+                                        className="w-full bg-secondary/50 border border-border rounded-xl px-4 py-3 text-sm"
+                                    >
+                                        {materialCategories.map((cat) => (
+                                            <option key={cat.id} value={cat.id}>{t(cat.labelKey)}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">{t('materialType')}</label>
+                                    <select
+                                        value={selectedStandard}
+                                        onChange={(e) => handleStandardChange(e.target.value, layer.id)}
+                                        className="w-full bg-secondary/50 border border-border rounded-xl px-4 py-3 text-sm"
+                                    >
+                                        {filteredStandards.map((std) => (
+                                            <option key={std.id} value={std.id}>{std.name} {std.density > 0 ? `(${std.density} t/m³)` : ''}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </>
                         )}
 
-                        {/* Frost Zone */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-medium text-muted-foreground">{t('frostZone')}</label>
-                            <select
-                                value={selectedFrostZone}
-                                onChange={(e) => setSelectedFrostZone(e.target.value)}
-                                className="w-full bg-secondary/30 border border-border rounded-xl px-4 py-3 text-sm"
-                            >
-                                {frostZones.map((zone) => (
-                                    <option key={zone.id} value={zone.id}>{zone.name}</option>
-                                ))}
-                            </select>
+                        <div className="grid grid-cols-2 gap-4">
+                            <Input
+                                label={`${t('thickness')} (${t('units.thickness')})`}
+                                icon={Ruler}
+                                type="text"
+                                inputMode="decimal"
+                                value={layer.thickness}
+                                onChange={(e) => updateLayer(layer.id, { thickness: e.target.value })}
+                                placeholder={t('placeholders.thickness')}
+                            />
+                            <Input
+                                label={`${t('density')} (${t('units.density')})`}
+                                icon={Scale}
+                                type="text"
+                                inputMode="decimal"
+                                value={layer.density}
+                                onChange={(e) => updateLayer(layer.id, { density: e.target.value })}
+                                placeholder={t('placeholders.density')}
+                            />
                         </div>
-                    </>
-                )}
 
-                <Input
-                    label={`${t('density')} (${t('units.density')})`}
-                    icon={Scale}
-                    type="text"
-                    inputMode="decimal"
-                    value={density}
-                    onChange={(e) => {
-                        setDensity(e.target.value);
-                        if (selectedStandard !== 'custom') setSelectedStandard('custom');
-                    }}
-                    placeholder={t('placeholders.density')}
-                />
-            </div>
+                        {layer.compactionFactor > 1 && (
+                            <div className="flex items-center justify-between gap-2 px-1">
+                                <p className="text-[10px] text-muted-foreground italic">
+                                    {layer.isLoose
+                                        ? `${t('estCompacted')}: ${(parseFloat(layer.thickness.replace(',', '.')) / layer.compactionFactor).toFixed(1)} cm`
+                                        : `${t('estLoose')}: ${(parseFloat(layer.thickness.replace(',', '.')) * layer.compactionFactor).toFixed(1)} cm`}
+                                </p>
+                                <div className="flex items-center gap-2">
+                                    <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t('compaction')}:</label>
+                                    <button
+                                        onClick={() => updateLayer(layer.id, { isLoose: !layer.isLoose })}
+                                        className={`text-[10px] font-bold px-3 py-1 rounded-lg border transition-all ${layer.isLoose
+                                            ? 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30'
+                                            : 'bg-secondary text-secondary-foreground border-border'}`}
+                                    >
+                                        {layer.isLoose ? t('loose') : t('compacted')}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            ))}
+
+            <button
+                onClick={() => addLayer({ name: 'New Layer', thickness: '', density: '2.4', isLoose: false, compactionFactor: 1.25 })}
+                className="w-full py-4 border-2 border-dashed border-primary/20 text-primary rounded-2xl text-sm font-semibold hover:bg-primary/5 transition-colors"
+            >
+                + Add Another Layer
+            </button>
+
         </div>
     );
 }

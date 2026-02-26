@@ -14,33 +14,40 @@ export interface AsphaltTonnageParams {
 
 export const DEFAULT_COMPACTION_FACTOR = 1.25;
 
-/**
- * Calculates asphalt tonnage and area.
- */
-export function calculateAsphalt(params: AsphaltTonnageParams) {
+export function calculateLayer(params: AsphaltTonnageParams) {
     const { length, width, thickness, density, isLoose, compactionFactor = DEFAULT_COMPACTION_FACTOR } = params;
 
     let effectiveCompactedThickness = thickness;
     if (isLoose) {
-        // If provided thickness is LOOSE, we divide by factor to get COMPACTED thickness for volume calc?
-        // Wait, usually the user wants to achieve a target COMPACTED thickness.
-        // If isLoose is true, it means the input 'thickness' is the LOOSE thickness.
-        // So effectively we get less final thickness.
         effectiveCompactedThickness = thickness / compactionFactor;
     }
-    // If isLoose is false (default), input is COMPACTED thickness, which is what we use for volume.
 
     const area = length * width;
-    // Volume is always based on Final Compacted Volume for tonnage calculation?
-    // Actually, Tonnage = Mass. Mass = Volume * Density.
-    // Density is usually given as "Bulk Density" (Raumdichte) of the COMPACTED material.
-    // So yes, we need the compacted volume.
     const volume = area * (effectiveCompactedThickness / 100);
     const tonnage = volume * density;
 
     return {
         area: parseFloat(area.toFixed(1)),
         tonnage: parseFloat(tonnage.toFixed(2)),
+    };
+}
+
+export function calculateTotal(layers: AsphaltTonnageParams[]) {
+    if (!layers || layers.length === 0) return { area: 0, tonnage: 0, totalCost: 0 };
+
+    let totalTonnage = 0;
+    // Area is determined by length*width which is theoretically constant across layers if they cover the whole area
+    // So we just take the first layer's area, or recalculate.
+    const firstLayerArea = (layers[0].length * layers[0].width);
+
+    layers.forEach(layer => {
+        const result = calculateLayer(layer);
+        totalTonnage += result.tonnage;
+    });
+
+    return {
+        area: parseFloat(firstLayerArea.toFixed(1)),
+        tonnage: parseFloat(totalTonnage.toFixed(2))
     };
 }
 

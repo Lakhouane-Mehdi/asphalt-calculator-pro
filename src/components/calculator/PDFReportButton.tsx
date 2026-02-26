@@ -13,6 +13,9 @@ export default function PDFReportButton() {
     const store = useStore();
 
     const generatePDF = () => {
+        const totalThickness = store.layers.reduce((sum, layer) => sum + (parseFloat(layer.thickness.replace(',', '.')) || 0), 0).toString();
+        const primaryDensity = store.layers[0]?.density || '2.4';
+
         const doc = new jsPDF();
 
         // --- Header ---
@@ -45,8 +48,8 @@ export default function PDFReportButton() {
             body: [
                 [`${t('length')} (${t('units.length')})`, store.length],
                 [`${t('width')} (${t('units.length')})`, store.width],
-                [`${t('thickness')} (${t('units.thickness')})`, store.thickness],
-                [`${t('density')} (${t('units.density')})`, store.density],
+                [`${t('thickness')} (${t('units.thickness')})`, totalThickness],
+                [`${t('density')} (${t('units.density')})`, primaryDensity],
                 [`${t('area')} (${t('units.area')})`, store.area.toFixed(2)],
             ],
             theme: 'striped',
@@ -60,7 +63,7 @@ export default function PDFReportButton() {
             body: [
                 [{ content: `${t('tonnage')} (${t('units.tonnage')})`, styles: { fontStyle: 'bold' } }, { content: store.tonnage.toString(), styles: { fontStyle: 'bold', textColor: [255, 0, 0] } }],
                 ['Est. Material Cost', store.totalCost > 0 ? `${store.totalCost.toFixed(2)} €` : '—'],
-                ['Compaction Factor', store.isLoose ? 'Loose (Unverdichtet)' : 'Compacted (Verdichtet)'],
+                ['Total Layers', store.layers.length.toString()],
             ],
             theme: 'grid',
             headStyles: { fillColor: [66, 66, 66] },
