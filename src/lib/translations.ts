@@ -133,7 +133,11 @@ export const translations = {
         analyticsCookies: "Analytics (Anonymous)",
         analyticsCookiesDesc: "Helps us understand from which countries our users come from.",
         apply: "Apply Selection",
-        downloadReport: "Download PDF Report"
+        downloadReport: "Download PDF Report",
+        modeWorker: "Worker Mode",
+        modeEngineer: "Engineer Mode",
+        modeWorkerDesc: "Quick calculation for tonnage",
+        modeEngineerDesc: "RStO 12 standards & advanced structures"
     },
     de: {
         title: "Schnellkalkulation",
@@ -267,6 +271,10 @@ export const translations = {
         analyticsCookies: "Analyse (Anonym)",
         analyticsCookiesDesc: "Hilft uns zu verstehen, aus welchen Ländern unsere Nutzer kommen.",
         apply: "Auswahl anwenden",
-        downloadReport: "Einbauprotokoll herunterladen (PDF)"
+        downloadReport: "Einbauprotokoll herunterladen (PDF)",
+        modeWorker: "Arbeiter-Modus",
+        modeEngineer: "Ingenieur-Modus",
+        modeWorkerDesc: "Schnelle Mengenberechnung",
+        modeEngineerDesc: "RStO 12 & erweiterte Standards"
     }
 };

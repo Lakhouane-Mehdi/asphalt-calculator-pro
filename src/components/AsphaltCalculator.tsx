@@ -21,7 +21,7 @@ export default function AsphaltCalculator() {
     const {
         projectName, setProjectName,
         clientName, setClientName,
-
+        calculatorMode, setCalculatorMode,
         tonnage
     } = useStore();
 
@@ -37,6 +37,32 @@ export default function AsphaltCalculator() {
         <div className="w-full max-w-2xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Card className="overflow-hidden border-none shadow-2xl bg-background/50 backdrop-blur-xl">
                 <CalculatorHeader onExport={handleExport} />
+
+                {/* Mode Toggle */}
+                <div className="px-6 pt-6 pb-2">
+                    <div className="flex p-1 bg-secondary/50 rounded-xl border border-border">
+                        <button
+                            onClick={() => setCalculatorMode('worker')}
+                            className={`flex-1 flex flex-col items-center justify-center py-2.5 rounded-lg text-xs font-semibold transition-all ${calculatorMode === 'worker'
+                                ? 'bg-background shadow-sm text-primary border border-border/50'
+                                : 'text-muted-foreground hover:text-foreground'
+                                }`}
+                        >
+                            <span className="text-sm">{t('modeWorker')}</span>
+                            <span className="text-[10px] font-normal opacity-70 mt-0.5 hidden sm:block">{t('modeWorkerDesc')}</span>
+                        </button>
+                        <button
+                            onClick={() => setCalculatorMode('engineer')}
+                            className={`flex-1 flex flex-col items-center justify-center py-2.5 rounded-lg text-xs font-semibold transition-all ${calculatorMode === 'engineer'
+                                ? 'bg-background shadow-sm text-primary border border-border/50'
+                                : 'text-muted-foreground hover:text-foreground'
+                                }`}
+                        >
+                            <span className="text-sm">{t('modeEngineer')}</span>
+                            <span className="text-[10px] font-normal opacity-70 mt-0.5 hidden sm:block">{t('modeEngineerDesc')}</span>
+                        </button>
+                    </div>
+                </div>
 
                 {/* Wizard Progress Bar */}
                 <div className="px-6 pb-2 pt-4">
