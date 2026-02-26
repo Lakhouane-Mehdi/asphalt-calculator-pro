@@ -40,6 +40,9 @@ interface AppState {
     projectName: string;
     clientName: string;
 
+    // Mode
+    calculatorMode: 'worker' | 'engineer';
+
     // Calculator Inputs
     length: string;
     width: string;
@@ -57,6 +60,7 @@ interface AppState {
     // Setters
     setProjectName: (name: string) => void;
     setClientName: (name: string) => void;
+    setCalculatorMode: (mode: 'worker' | 'engineer') => void;
     setIsLoose: (loose: boolean) => void;
     setPricePerTon: (price: string) => void;
     setCompactionFactor: (factor: number) => void;
@@ -93,6 +97,7 @@ export const useStore = create<AppState>()(persist((set, get) => {
     return {
         projectName: '',
         clientName: '',
+        calculatorMode: 'worker',
         length: '',
         width: '',
         thickness: '',
@@ -112,6 +117,7 @@ export const useStore = create<AppState>()(persist((set, get) => {
             const result = ProjectSchema.safeParse({ clientName: name });
             if (result.success) set({ clientName: name });
         },
+        setCalculatorMode: (calculatorMode) => set({ calculatorMode }),
         setIsLoose: (isLoose) => set((state) => ({ ...state, isLoose, ...runCalculations({ isLoose }) })),
         setPricePerTon: (pricePerTon) => {
             if (/^[\d,.]*$/.test(pricePerTon)) {

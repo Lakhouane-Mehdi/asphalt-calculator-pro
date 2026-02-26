@@ -16,7 +16,8 @@ export default function SpecsForm({ step }: SpecsFormProps) {
     const { t, language } = useLanguage();
     const {
         length, width, thickness, density, setSpecs,
-        isLoose, setIsLoose, setCompactionFactor, compactionFactor
+        isLoose, setIsLoose, setCompactionFactor, compactionFactor,
+        calculatorMode
     } = useStore();
 
     // Default to Asphalt for backward compatibility, or empty
@@ -136,7 +137,7 @@ export default function SpecsForm({ step }: SpecsFormProps) {
     return (
         <div className="space-y-6">
             <div className="grid gap-6">
-                {language === 'de' && (
+                {calculatorMode === 'engineer' && (
                     <>
                         {/* Material Category Dropdown */}
                         <div className="space-y-2">
