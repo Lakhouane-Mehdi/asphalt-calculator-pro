@@ -13,7 +13,20 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-    const [language, setLanguage] = useState<Language>('en');
+    const [language, setLanguage] = useState<Language>('de');
+
+    // Load from localStorage on mount
+    React.useEffect(() => {
+        const savedLang = localStorage.getItem('preferred-language') as Language;
+        if (savedLang === 'en' || savedLang === 'de') {
+            setLanguage(savedLang);
+        }
+    }, []);
+
+    // Save to localStorage on change
+    React.useEffect(() => {
+        localStorage.setItem('preferred-language', language);
+    }, [language]);
 
     // Enhanced translation function with interpolation
     const t = (key: string, params?: Record<string, string | number>) => {
