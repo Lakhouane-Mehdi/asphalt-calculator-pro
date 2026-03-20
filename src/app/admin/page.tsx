@@ -16,17 +16,12 @@ export default function AdminDashboard() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [pin, setPin] = useState('');
 
-    // Simple "Senior" Security: A PIN to keep casual eyes out.
-    // In a real enterprise app, we'd use NextAuth.js.
-    const ADMIN_PIN = "2024";
-
     const fetchStats = async () => {
         setLoading(true);
         try {
-            // Securely send PIN in headers (never rely on client-side check alone!)
             const res = await fetch('/api/analytics/stats', {
                 headers: {
-                    'x-admin-pin': ADMIN_PIN
+                    'x-admin-pin': pin
                 }
             });
 
@@ -53,13 +48,24 @@ export default function AdminDashboard() {
         }
     }, [isAuthenticated]);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (pin === ADMIN_PIN) {
-            setIsAuthenticated(true);
-        } else {
-            alert("Access Denied");
+        setLoading(true);
+        try {
+            const res = await fetch('/api/analytics/stats', {
+                headers: { 'x-admin-pin': pin }
+            });
+            if (res.ok) {
+                setIsAuthenticated(true);
+                const data = await res.json();
+                setStats(data.stats || []);
+            } else {
+                alert("Access Denied");
+            }
+        } catch {
+            alert("Connection error");
         }
+        setLoading(false);
     };
 
     if (!isAuthenticated) {

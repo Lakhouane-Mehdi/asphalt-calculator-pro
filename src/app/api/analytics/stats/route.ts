@@ -7,7 +7,7 @@ export async function GET(request: Request) {
     try {
         // Security Check: Verify Admin PIN
         const pin = request.headers.get('x-admin-pin');
-        if (pin !== '2024') { // In production, use process.env.ADMIN_PIN
+        if (!process.env.ADMIN_PIN || pin !== process.env.ADMIN_PIN) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
