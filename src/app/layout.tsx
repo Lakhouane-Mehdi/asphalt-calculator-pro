@@ -14,7 +14,16 @@ export const metadata: Metadata = {
   keywords: ["Asphalt Calculator", "Mehdi Lakhouane", "Smart Field", "Construction App", "Bitumen", "RStO", "German Standards", "Paving Tools"],
   manifest: "/manifest.json",
   icons: {
-    apple: "/icon.png",
+    icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Smart Field",
+    statusBarStyle: "black-translucent",
   },
   openGraph: {
     title: "Smart Field by Mehdi Lakhouane",
@@ -38,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="de" className="dark">
       <body className={`${inter.className} antialiased`}>
         <LanguageProvider>
           {children}

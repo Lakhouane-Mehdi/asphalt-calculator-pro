@@ -23,9 +23,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         }
     }, []);
 
-    // Save to localStorage on change
+    // Save to localStorage and keep <html lang> in sync for screen readers and SEO
     React.useEffect(() => {
         localStorage.setItem('preferred-language', language);
+        document.documentElement.lang = language;
     }, [language]);
 
     // Enhanced translation function with interpolation
