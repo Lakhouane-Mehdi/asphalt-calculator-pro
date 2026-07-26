@@ -1,17 +1,26 @@
 # dependencies
-/node_modules
-/.pnp
+node_modules/
+.pnp
 .pnp.js
 
 # testing
-/coverage
+coverage/
 
 # next.js
-/.next/
-/out/
+.next/
+out/
 
 # production
-/build
+build/
+
+# typescript / build artifacts
+*.tsbuildinfo
+next-env.d.ts
+
+# lint & compiler reports
+lint.json
+lint_report.json
+tsc-output.txt
 
 # misc
 .DS_Store
@@ -31,3 +40,20 @@ yarn-error.log*
 
 # IDE
 .vscode/
+.idea/
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# legacy v2 app - kept on disk for reference, not part of the Next.js build
+legacy_v2/
+
+# scratch / temp project folders
+smart-field-temp/
+
+# generated PWA service worker (next-pwa output)
+public/sw.js
+public/sw.js.map
+public/workbox-*.js
+public/workbox-*.js.map
+public/swe-worker-*.js
