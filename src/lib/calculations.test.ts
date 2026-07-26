@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { calculateTotal, predictCoolingTime, calculateLogistics, parseLocaleNumber, MAX_COOLING_MINUTES } from './calculations';
+import { layerDisplayName } from './layer-names';
 
 describe('parseLocaleNumber', () => {
     it('handles empty and invalid input', () => {
@@ -101,6 +102,39 @@ describe('Asphalt Calculations', () => {
         // Sum of 3 raw values: 0.01251 -> 0.01 t
         const layer = { length: 1, width: 1, thickness: 1, density: 0.417 };
         expect(calculateTotal([layer, layer, layer]).tonnage).toBe(0.01);
+    });
+});
+
+describe('layerDisplayName', () => {
+    it('prefers a user-supplied name', () => {
+        expect(layerDisplayName('AC 11 D S', 0, 3, 'de')).toBe('AC 11 D S');
+    });
+
+    it('uses a generic name for a single layer', () => {
+        expect(layerDisplayName('', 0, 1, 'de')).toBe('Schicht 1');
+        expect(layerDisplayName('', 0, 1, 'en')).toBe('Layer 1');
+    });
+
+    it('names layers by structural position in German', () => {
+        expect(layerDisplayName('', 0, 3, 'de')).toBe('Deckschicht');
+        expect(layerDisplayName('', 1, 3, 'de')).toBe('Binderschicht');
+        expect(layerDisplayName('', 2, 3, 'de')).toBe('Tragschicht');
+    });
+
+    it('names layers by structural position in English', () => {
+        expect(layerDisplayName('', 0, 3, 'en')).toBe('Surface Course');
+        expect(layerDisplayName('', 1, 3, 'en')).toBe('Binder Course');
+        expect(layerDisplayName('', 2, 3, 'en')).toBe('Base Course');
+    });
+
+    it('handles a two-layer structure as surface + base', () => {
+        expect(layerDisplayName('', 0, 2, 'de')).toBe('Deckschicht');
+        expect(layerDisplayName('', 1, 2, 'de')).toBe('Tragschicht');
+    });
+
+    it('falls back to numbering for middle layers beyond three', () => {
+        expect(layerDisplayName('', 2, 5, 'de')).toBe('Schicht 3');
+        expect(layerDisplayName('', 4, 5, 'de')).toBe('Tragschicht');
     });
 });
 

@@ -2,10 +2,14 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useStore } from "@/lib/store";
+import { layerDisplayName } from "@/lib/layer-names";
+import { parseLocaleNumber } from "@/lib/calculations";
 
 export default function ResultCards() {
     const { t, language } = useLanguage();
-    const { tonnage, area, layers } = useStore();
+    const { tonnage, netTonnage, area, layers, wastePercent } = useStore();
+    const waste = parseLocaleNumber(wastePercent);
+    const showWaste = waste > 0 && netTonnage > 0;
 
     return (
         <div className="grid grid-cols-2 gap-4">
@@ -15,6 +19,11 @@ export default function ResultCards() {
                     {tonnage.toLocaleString(language === 'de' ? 'de-DE' : 'en-US')}
                     <span className="text-sm font-normal text-muted-foreground ml-1">{t('units.tonnage')}</span>
                 </span>
+                {showWaste && (
+                    <span className="text-[10px] text-muted-foreground">
+                        {t('netTonnage')}: {netTonnage.toLocaleString(language === 'de' ? 'de-DE' : 'en-US')} {t('units.tonnage')} · +{waste.toLocaleString(language === 'de' ? 'de-DE' : 'en-US')}% {t('withWaste')}
+                    </span>
+                )}
             </div>
 
             <div className="rounded-xl bg-primary/10 border border-primary/20 p-4 flex flex-col items-center text-center space-y-1">
@@ -32,7 +41,7 @@ export default function ResultCards() {
                     <div className="space-y-2">
                         {layers.map((layer, idx) => (
                             <div key={layer.id} className="flex justify-between items-center p-3 rounded-xl bg-secondary/50 border border-border text-sm">
-                                <span className="font-medium">{layer.name || `Layer ${idx + 1}`}</span>
+                                <span className="font-medium">{layerDisplayName(layer.name, idx, layers.length, language)}</span>
                                 <div className="text-right">
                                     <span className="font-bold">{layer.tonnage ? layer.tonnage.toLocaleString(language === 'de' ? 'de-DE' : 'en-US') : '0'}</span>
                                     <span className="text-muted-foreground ml-1 text-xs">{t('units.tonnage')}</span>

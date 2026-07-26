@@ -49,6 +49,26 @@ export interface Layer {
     tonnage: number;
 }
 
+export type Currency = 'EUR' | 'USD' | 'GBP' | 'CHF';
+
+export const CURRENCY_SYMBOLS: Record<Currency, string> = {
+    EUR: '€',
+    USD: '$',
+    GBP: '£',
+    CHF: 'CHF',
+};
+
+/** Company details used to turn a quote into a legally compliant invoice (§14 UStG). */
+export interface CompanyProfile {
+    name: string;
+    address: string;
+    taxId: string;        // Steuernummer / USt-IdNr.
+    contact: string;      // phone / email
+    paymentTerms: string;
+    invoicePrefix: string;
+    nextInvoiceNumber: number;
+}
+
 // --- Store Interface ---
 
 interface AppState {
@@ -66,8 +86,15 @@ interface AppState {
     // Layers (Multi-Layer Calc)
     layers: Layer[];
 
+    // Commercial settings
+    currency: Currency;
+    wastePercent: string;
+    documentType: 'quote' | 'invoice';
+    company: CompanyProfile;
+
     // Calculator Results (Computed)
-    tonnage: number;
+    tonnage: number;      // includes waste allowance
+    netTonnage: number;   // theoretical, before waste
     area: number;
     totalCost: number;
     pricePerTon: string;
@@ -80,11 +107,19 @@ interface AppState {
     // Global Specs
     setSpecs: (specs: Partial<Pick<AppState, 'length' | 'width'>>) => void;
     setPricePerTon: (price: string) => void;
+    setCurrency: (currency: Currency) => void;
+    setWastePercent: (percent: string) => void;
+    setDocumentType: (type: 'quote' | 'invoice') => void;
+    updateCompany: (updates: Partial<CompanyProfile>) => void;
+    consumeInvoiceNumber: () => string;
 
     // Layer Management
     addLayer: (layer: Omit<Layer, 'id' | 'tonnage'>) => void;
     updateLayer: (id: string, updates: Partial<Layer>) => void;
     removeLayer: (id: string) => void;
+
+    // Project lifecycle
+    resetProject: () => void;
 }
 
 // --- Store Implementation ---
@@ -110,6 +145,11 @@ export const useStore = create<AppState>()(persist((set, get) => {
 
         const results = calculateTotal(computationLayers);
 
+        // Waste / overage allowance for spillage, cold joints and truck bed residue
+        const wasteFactor = 1 + (parseInput(s.wastePercent) / 100);
+        const netTonnage = results.tonnage;
+        const grossTonnage = parseFloat((netTonnage * wasteFactor).toFixed(2));
+
         // Update individual layer tonnages
         const updatedLayers = s.layers.map(l => {
             const singleResult = calculateTotal([{
@@ -121,24 +161,41 @@ export const useStore = create<AppState>()(persist((set, get) => {
         });
 
         const p = parseInput(s.pricePerTon);
-        const totalCost = parseFloat((results.tonnage * p).toFixed(2));
+        const totalCost = parseFloat((grossTonnage * p).toFixed(2));
 
-        return { ...results, totalCost, layers: updatedLayers };
+        return { ...results, tonnage: grossTonnage, netTonnage, totalCost, layers: updatedLayers };
     };
 
-    return {
+    const initialProject = {
         projectName: '',
         clientName: '',
-        calculatorMode: 'worker',
         length: '',
         width: '',
         layers: [{
-            id: 'layer-1', name: 'Layer 1', thickness: '', density: '2.4', isLoose: false, compactionFactor: 1.25, tonnage: 0
-        }],
+            id: 'layer-1', name: '', thickness: '', density: '2.4', isLoose: false, compactionFactor: 1.25, tonnage: 0
+        }] as Layer[],
         tonnage: 0,
+        netTonnage: 0,
         area: 0,
         totalCost: 0,
         pricePerTon: '',
+    };
+
+    return {
+        ...initialProject,
+        calculatorMode: 'worker' as const,
+        currency: 'EUR' as Currency,
+        wastePercent: '3',
+        documentType: 'quote' as const,
+        company: {
+            name: '',
+            address: '',
+            taxId: '',
+            contact: '',
+            paymentTerms: '',
+            invoicePrefix: 'RE-',
+            nextInvoiceNumber: 1,
+        },
 
         setProjectName: (name) => {
             const result = ProjectSchema.safeParse({ projectName: name });
@@ -160,6 +217,20 @@ export const useStore = create<AppState>()(persist((set, get) => {
             if (/^[\d,.]*$/.test(pricePerTon)) {
                 set((state) => ({ ...state, pricePerTon, ...runCalculations({ pricePerTon }) }));
             }
+        },
+        setCurrency: (currency) => set({ currency }),
+        setWastePercent: (wastePercent) => {
+            if (/^[\d,.]*$/.test(wastePercent)) {
+                set((state) => ({ ...state, wastePercent, ...runCalculations({ wastePercent }) }));
+            }
+        },
+        setDocumentType: (documentType) => set({ documentType }),
+        updateCompany: (updates) => set((state) => ({ company: { ...state.company, ...updates } })),
+        consumeInvoiceNumber: () => {
+            const { company } = get();
+            const number = `${company.invoicePrefix}${new Date().getFullYear()}-${String(company.nextInvoiceNumber).padStart(4, '0')}`;
+            set({ company: { ...company, nextInvoiceNumber: company.nextInvoiceNumber + 1 } });
+            return number;
         },
 
         // --- Layer Actions ---
@@ -184,6 +255,14 @@ export const useStore = create<AppState>()(persist((set, get) => {
             set((state) => {
                 const newLayers = state.layers.filter(l => l.id !== id);
                 return { ...state, ...runCalculations({ layers: newLayers }) };
+            });
+        },
+
+        // Clears the current job but keeps company profile, currency and preferences
+        resetProject: () => {
+            set({
+                ...initialProject,
+                layers: initialProject.layers.map(l => ({ ...l })),
             });
         }
     };

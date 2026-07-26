@@ -2,11 +2,16 @@
 
 import { DollarSign } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useStore } from "@/lib/store";
+import { useStore, CURRENCY_SYMBOLS } from "@/lib/store";
 
 export default function PricingSection() {
     const { t, language } = useLanguage();
-    const { totalCost, pricePerTon, setPricePerTon } = useStore();
+    const { totalCost, pricePerTon, setPricePerTon, currency } = useStore();
+    const symbol = CURRENCY_SYMBOLS[currency];
+    const formattedCost = totalCost.toLocaleString(language === 'de' ? 'de-DE' : 'en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
 
     return (
         <div className="space-y-3 pt-2">
@@ -29,7 +34,7 @@ export default function PricingSection() {
                 <div className="flex-1 text-right">
                     <span className="block text-xs text-muted-foreground">{t('totalEstimate')}</span>
                     <span className="text-2xl font-bold text-green-500">
-                        {language === 'en' ? '$' : '€'}{totalCost.toLocaleString(language === 'de' ? 'de-DE' : 'en-US')}
+                        {language === 'de' ? `${formattedCost} ${symbol}` : `${symbol}${formattedCost}`}
                     </span>
                 </div>
             </div>

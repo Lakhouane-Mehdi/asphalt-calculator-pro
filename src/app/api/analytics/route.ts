@@ -13,15 +13,8 @@ export async function POST(request: Request) {
         // Get country from Vercel headers (Anonymity: We never touch the IP)
         const country = request.headers.get('x-vercel-ip-country') || 'Unknown';
 
-        // Lazy Cleanup Strategy (1% chance per request)
-        // Helps meet GDPR "Storage Limitation" without needing a dedicated cron job.
-        if (Math.random() < 0.01) {
-            // Delete data older than 12 months
-            await sql`
-                DELETE FROM user_country_stats 
-                WHERE timestamp < NOW() - INTERVAL '1 year'
-            `;
-        }
+        // Retention cleanup runs on a daily cron (see /api/cron/cleanup), keeping
+        // the user-facing request path free of maintenance DELETEs.
 
         // Log to SQL with Version Tracking
         await sql`

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/Input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useStore } from "@/lib/store";
 import { parseLocaleNumber } from "@/lib/calculations";
+import { layerDisplayName } from "@/lib/layer-names";
 import { germanStandards, frostZones, materialCategories, MaterialCategory } from "@/lib/standards";
 import { RStO12_Standards, TrafficClass } from "@/lib/standards-rsto";
 
@@ -94,7 +95,9 @@ export default function SpecsForm({ step }: SpecsFormProps) {
                     )}
 
                     <div className="mb-4">
-                        <h4 className="text-sm font-semibold text-primary">Layer {index + 1}</h4>
+                        <h4 className="text-sm font-semibold text-primary">
+                            {layerDisplayName(layer.name, index, layers.length, language)}
+                        </h4>
                     </div>
 
                     <div className="grid gap-5">
@@ -174,7 +177,7 @@ export default function SpecsForm({ step }: SpecsFormProps) {
             ))}
 
             <button
-                onClick={() => addLayer({ name: 'New Layer', thickness: '', density: '2.4', isLoose: false, compactionFactor: 1.25 })}
+                onClick={() => addLayer({ name: '', thickness: '', density: '2.4', isLoose: false, compactionFactor: 1.25 })}
                 className="w-full py-4 border-2 border-dashed border-primary/20 text-primary rounded-2xl text-sm font-semibold hover:bg-primary/5 transition-colors"
             >
                 + Add Another Layer

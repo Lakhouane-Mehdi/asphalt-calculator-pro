@@ -16,6 +16,7 @@ import ResultCards from "./calculator/ResultCards";
 import PricingSection from "./calculator/PricingSection";
 import PDFReportButton from "./calculator/PDFReportButton";
 import SignaturePad from "./calculator/SignaturePad";
+import DocumentOptions from "./calculator/DocumentOptions";
 
 export default function AsphaltCalculator() {
     const { t } = useLanguage();
@@ -23,7 +24,7 @@ export default function AsphaltCalculator() {
         projectName, setProjectName,
         clientName, setClientName,
         calculatorMode, setCalculatorMode,
-        tonnage
+        tonnage, documentType, resetProject
     } = useStore();
 
     const [currentStep, setCurrentStep] = useState<number>(1);
@@ -35,10 +36,17 @@ export default function AsphaltCalculator() {
     const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, totalSteps));
     const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
+    const handleReset = () => {
+        if (!window.confirm(t('newProjectConfirm'))) return;
+        resetProject();
+        setSignatureData(null);
+        setCurrentStep(1);
+    };
+
     return (
         <div className="w-full max-w-2xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Card className="overflow-hidden border-none shadow-2xl bg-background/50 backdrop-blur-xl">
-                <CalculatorHeader onExport={() => handleExport(signatureData)} />
+                <CalculatorHeader onExport={() => handleExport(signatureData)} onReset={handleReset} />
 
                 {/* Mode Toggle */}
                 <div className="px-6 pt-6 pb-2">
@@ -129,6 +137,7 @@ export default function AsphaltCalculator() {
                                         <span className="text-sm font-semibold">{t('calculationsVerified')}</span>
                                     </div>
                                 </div>
+                                <DocumentOptions />
                                 <SignaturePad onSave={setSignatureData} />
                                 <div className="pt-2">
                                     <PDFReportButton />
@@ -162,7 +171,7 @@ export default function AsphaltCalculator() {
                                 className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/20 rounded-xl"
                                 disabled={tonnage <= 0}
                             >
-                                <Download className="h-4 w-4 mr-2" /> {t('exportQuotePdf')}
+                                <Download className="h-4 w-4 mr-2" /> {documentType === 'invoice' ? t('exportInvoicePdf') : t('exportQuotePdf')}
                             </Button>
                         )}
                     </div>
