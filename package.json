@@ -42,5 +42,8 @@
     "fake-indexeddb": "^6.2.5",
     "typescript": "^5",
     "vitest": "^4.0.18"
+  },
+  "overrides": {
+    "debug": "^4.4.3"
   }
 }
