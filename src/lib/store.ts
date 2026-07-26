@@ -92,6 +92,9 @@ interface AppState {
     documentType: 'quote' | 'invoice';
     company: CompanyProfile;
 
+    // Id of the saved job currently open, if any
+    currentJobId: number | null;
+
     // Calculator Results (Computed)
     tonnage: number;      // includes waste allowance
     netTonnage: number;   // theoretical, before waste
@@ -120,6 +123,23 @@ interface AppState {
 
     // Project lifecycle
     resetProject: () => void;
+    setCurrentJobId: (id: number | null) => void;
+    loadJob: (job: LoadableJob) => void;
+}
+
+/** The subset of a saved job that restores into the calculator. */
+export interface LoadableJob {
+    id?: number;
+    projectName: string;
+    clientName: string;
+    length: string;
+    width: string;
+    layers: Layer[];
+    pricePerTon: string;
+    wastePercent: string;
+    currency: Currency;
+    calculatorMode: 'worker' | 'engineer';
+    documentType: 'quote' | 'invoice';
 }
 
 // --- Store Implementation ---
@@ -179,6 +199,7 @@ export const useStore = create<AppState>()(persist((set, get) => {
         area: 0,
         totalCost: 0,
         pricePerTon: '',
+        currentJobId: null as number | null,
     };
 
     return {
@@ -264,6 +285,33 @@ export const useStore = create<AppState>()(persist((set, get) => {
                 ...initialProject,
                 layers: initialProject.layers.map(l => ({ ...l })),
             });
+        },
+
+        setCurrentJobId: (currentJobId) => set({ currentJobId }),
+
+        // Restore a saved job and recompute results from its inputs
+        loadJob: (job) => {
+            set((state) => ({
+                ...state,
+                projectName: job.projectName,
+                clientName: job.clientName,
+                length: job.length,
+                width: job.width,
+                pricePerTon: job.pricePerTon,
+                wastePercent: job.wastePercent,
+                currency: job.currency,
+                calculatorMode: job.calculatorMode,
+                documentType: job.documentType,
+                currentJobId: job.id ?? null,
+                // Returns `layers` with per-layer tonnages recomputed, plus the totals
+                ...runCalculations({
+                    length: job.length,
+                    width: job.width,
+                    layers: job.layers.map(l => ({ ...l })),
+                    pricePerTon: job.pricePerTon,
+                    wastePercent: job.wastePercent,
+                }),
+            }));
         }
     };
 }, { name: 'asphalt-calculator-store' }));

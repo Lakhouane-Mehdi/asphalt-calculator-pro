@@ -17,6 +17,7 @@ import PricingSection from "./PricingSection";
 import PDFReportButton from "./PDFReportButton";
 import SignaturePad from "./SignaturePad";
 import DocumentOptions from "./DocumentOptions";
+import JobHistory from "./JobHistory";
 
 export default function AsphaltCalculator() {
     const { t } = useLanguage();
@@ -112,6 +113,7 @@ export default function AsphaltCalculator() {
                                         placeholder={t('placeholders.client')}
                                     />
                                 </div>
+                                <JobHistory />
                             </div>
                         )}
 

@@ -15,6 +15,7 @@
     "@vercel/postgres": "^0.10.0",
     "autoprefixer": "^10.4.16",
     "clsx": "^2.1.1",
+    "dexie": "^4.4.4",
     "jspdf": "^4.0.0",
     "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.562.0",
@@ -38,6 +39,7 @@
     "@vitest/ui": "^4.0.18",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
+    "fake-indexeddb": "^6.2.5",
     "typescript": "^5",
     "vitest": "^4.0.18"
   }
