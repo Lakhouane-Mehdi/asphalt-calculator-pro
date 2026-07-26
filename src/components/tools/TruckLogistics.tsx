@@ -5,7 +5,7 @@ import { Truck, Timer, Activity, RotateCw } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { calculateLogistics } from "@/lib/calculations";
+import { calculateLogistics } from "@/lib/calc/calculations";
 
 export default function TruckLogistics() {
     const { t } = useLanguage();

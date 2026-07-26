@@ -1,14 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Ruler, Scale } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useStore } from "@/lib/store";
-import { parseLocaleNumber } from "@/lib/calculations";
-import { layerDisplayName } from "@/lib/layer-names";
-import { germanStandards, frostZones, materialCategories, MaterialCategory } from "@/lib/standards";
-import { RStO12_Standards, TrafficClass } from "@/lib/standards-rsto";
+import { parseLocaleNumber } from "@/lib/calc/calculations";
+import { layerDisplayName } from "@/lib/calc/layer-names";
+import { germanStandards, materialCategories, MaterialCategory } from "@/lib/domain/standards";
 
 interface SpecsFormProps {
     step: 'dimensions' | 'material';

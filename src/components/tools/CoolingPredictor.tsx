@@ -5,7 +5,7 @@ import { Thermometer, Wind, Clock, AlertTriangle } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { predictCoolingTime } from "@/lib/calculations";
+import { predictCoolingTime } from "@/lib/calc/calculations";
 
 export default function CoolingPredictor() {
     const { t } = useLanguage();

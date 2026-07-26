@@ -43,11 +43,43 @@ A next-generation PWA (Progressive Web App) designed for paving professionals, c
 - **Header Security:** Strict headers for PWA and API communication.
 
 ### Tech Stack
-- **Framework:** Next.js 15 (App Router)
+- **Framework:** Next.js 16 (App Router)
 - **Styling:** Tailwind CSS + shadcn/ui
+- **State:** Zustand (persisted to localStorage)
 - **Database:** Vercel Postgres (Anonymous Analytics)
 - **Reporting:** jsPDF / AutoTable
+- **Testing:** Vitest
 - **Deployment:** Vercel
+
+### Project Structure
+
+```
+src/
+├── app/                      # Next.js App Router
+│   ├── admin/                # PIN-protected analytics dashboard
+│   ├── api/
+│   │   ├── analytics/        # Consent-gated country logging + stats
+│   │   ├── cron/cleanup/     # Daily GDPR retention job
+│   │   └── setup-db/         # One-off schema bootstrap
+│   └── legal/                # Impressum & Datenschutzerklärung
+├── components/
+│   ├── calculator/           # The 4-step quote wizard and its sections
+│   ├── tools/                # Standalone tools (logistics, cooling, AR, vision)
+│   └── ui/                   # Presentational primitives (Button, Card, Input…)
+├── contexts/                 # React context providers (language)
+├── hooks/                    # Reusable stateful logic
+└── lib/
+    ├── calc/                 # Pure math: tonnage, cooling, parsing, layer naming
+    ├── db/                   # SQL schema
+    ├── domain/               # German standards data (RStO 12, ZTV Asphalt)
+    ├── i18n/                 # Translation tables and lookup
+    ├── pdf/                  # Quote / invoice document generation
+    ├── store.ts              # Zustand store — single source of truth
+    └── utils.ts              # Shared helpers
+```
+
+Everything under `lib/calc` is pure and framework-free, so the math is unit-tested
+directly without rendering any React.
 
 ## 📦 Getting Started
 
@@ -58,7 +90,21 @@ npm install
 # Run development server
 npm run dev
 # Open http://localhost:3000
+
+# Run the test suite
+npm test
+
+# Production build
+npm run build
 ```
+
+### Environment Variables
+
+| Variable | Purpose |
+| --- | --- |
+| `ADMIN_PIN` | Guards `/admin` and the analytics/setup APIs |
+| `POSTGRES_URL` | Vercel Postgres connection (set automatically by the integration) |
+| `CRON_SECRET` | Authorizes the daily retention cleanup cron |
 
 ## 📄 License
 Property of Mehdi Lakhouane. All rights reserved.

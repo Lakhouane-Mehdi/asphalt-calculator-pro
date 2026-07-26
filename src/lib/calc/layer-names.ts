@@ -1,4 +1,4 @@
-import { translations, type Language } from "./translations";
+import { translations, type Language } from "../i18n/translations";
 
 /**
  * Default display name for a layer based on its position in the pavement structure.

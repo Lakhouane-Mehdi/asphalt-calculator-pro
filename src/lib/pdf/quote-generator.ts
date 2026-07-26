@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { CURRENCY_SYMBOLS, type Currency, type CompanyProfile } from "./store";
+import { CURRENCY_SYMBOLS, type Currency, type CompanyProfile } from "../store";
 
 interface QuoteData {
     projectName: string;

@@ -10,13 +10,13 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useExportQuote } from "@/hooks/useExportQuote";
 
 // Sub-components
-import CalculatorHeader from "./calculator/CalculatorHeader";
-import SpecsForm from "./calculator/SpecsForm";
-import ResultCards from "./calculator/ResultCards";
-import PricingSection from "./calculator/PricingSection";
-import PDFReportButton from "./calculator/PDFReportButton";
-import SignaturePad from "./calculator/SignaturePad";
-import DocumentOptions from "./calculator/DocumentOptions";
+import CalculatorHeader from "./CalculatorHeader";
+import SpecsForm from "./SpecsForm";
+import ResultCards from "./ResultCards";
+import PricingSection from "./PricingSection";
+import PDFReportButton from "./PDFReportButton";
+import SignaturePad from "./SignaturePad";
+import DocumentOptions from "./DocumentOptions";
 
 export default function AsphaltCalculator() {
     const { t } = useLanguage();

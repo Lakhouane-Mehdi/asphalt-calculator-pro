@@ -5,12 +5,12 @@ import {
   Calculator, Truck, Leaf, Thermometer,
   Maximize, Layers
 } from "lucide-react";
-import AsphaltCalculator from "@/components/AsphaltCalculator";
-import TruckLogistics from "@/components/TruckLogistics";
-import SustainabilityTools from "@/components/SustainabilityTools";
-import CoolingPredictor from "@/components/CoolingPredictor";
-import VisionMeasurement from "@/components/VisionMeasurement";
-import AROverlay from "@/components/AROverlay";
+import AsphaltCalculator from "@/components/calculator/AsphaltCalculator";
+import TruckLogistics from "@/components/tools/TruckLogistics";
+import SustainabilityTools from "@/components/tools/SustainabilityTools";
+import CoolingPredictor from "@/components/tools/CoolingPredictor";
+import VisionMeasurement from "@/components/tools/VisionMeasurement";
+import AROverlay from "@/components/tools/AROverlay";
 import Navbar from "@/components/Navbar";
 import { useLanguage } from "@/contexts/LanguageContext";
 

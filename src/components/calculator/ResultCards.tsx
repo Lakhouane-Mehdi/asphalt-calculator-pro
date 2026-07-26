@@ -2,8 +2,8 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useStore } from "@/lib/store";
-import { layerDisplayName } from "@/lib/layer-names";
-import { parseLocaleNumber } from "@/lib/calculations";
+import { layerDisplayName } from "@/lib/calc/layer-names";
+import { parseLocaleNumber } from "@/lib/calc/calculations";
 
 export default function ResultCards() {
     const { t, language } = useLanguage();

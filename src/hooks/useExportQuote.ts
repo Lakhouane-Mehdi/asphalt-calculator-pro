@@ -2,9 +2,9 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useStore } from "@/lib/store";
-import { generateQuote } from "@/lib/quote-generator";
-import { parseLocaleNumber } from "@/lib/calculations";
-import { layerDisplayName } from "@/lib/layer-names";
+import { generateQuote } from "@/lib/pdf/quote-generator";
+import { parseLocaleNumber } from "@/lib/calc/calculations";
+import { layerDisplayName } from "@/lib/calc/layer-names";
 
 export function useExportQuote() {
     const { language } = useLanguage();

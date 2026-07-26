@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { FileCheck } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useStore, CURRENCY_SYMBOLS } from "@/lib/store";
-import { parseLocaleNumber } from "@/lib/calculations";
+import { parseLocaleNumber } from "@/lib/calc/calculations";
 
 const REPORT_LABELS = {
     de: {
