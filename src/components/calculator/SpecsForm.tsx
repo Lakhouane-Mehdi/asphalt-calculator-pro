@@ -5,6 +5,7 @@ import { Ruler, Scale } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useStore } from "@/lib/store";
+import { parseLocaleNumber } from "@/lib/calculations";
 import { germanStandards, frostZones, materialCategories, MaterialCategory } from "@/lib/standards";
 import { RStO12_Standards, TrafficClass } from "@/lib/standards-rsto";
 
@@ -152,8 +153,8 @@ export default function SpecsForm({ step }: SpecsFormProps) {
                             <div className="flex items-center justify-between gap-2 px-1">
                                 <p className="text-[10px] text-muted-foreground italic">
                                     {layer.isLoose
-                                        ? `${t('estCompacted')}: ${(parseFloat(layer.thickness.replace(',', '.')) / layer.compactionFactor).toFixed(1)} cm`
-                                        : `${t('estLoose')}: ${(parseFloat(layer.thickness.replace(',', '.')) * layer.compactionFactor).toFixed(1)} cm`}
+                                        ? `${t('estCompacted')}: ${(parseLocaleNumber(layer.thickness) / layer.compactionFactor).toFixed(1)} cm`
+                                        : `${t('estLoose')}: ${(parseLocaleNumber(layer.thickness) * layer.compactionFactor).toFixed(1)} cm`}
                                 </p>
                                 <div className="flex items-center gap-2">
                                     <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t('compaction')}:</label>

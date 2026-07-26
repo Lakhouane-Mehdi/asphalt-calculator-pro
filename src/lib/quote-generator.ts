@@ -15,10 +15,12 @@ interface QuoteData {
     results: {
         area: string;
         tonnage: number;
-        pricePerTon: string;
-        totalCost: string;
+        pricePerTon: number;
+        totalCost: number;
     };
 }
+
+export const GERMAN_VAT_RATE = 0.19;
 
 export function generateQuote(data: QuoteData) {
     const doc = new jsPDF();
@@ -89,17 +91,35 @@ export function generateQuote(data: QuoteData) {
     });
 
     // --- Cost Table ---
-    const costBody = [
-        ["Total Required Tonnage", `${data.results.tonnage} t`],
-        ["Price per Ton", `${data.language === 'de' ? '€' : '$'}${data.results.pricePerTon || "0.00"}`],
-        ["TOTAL ESTIMATE", `${data.language === 'de' ? '€' : '$'}${data.results.totalCost}`],
-    ];
+    const isGerman = data.language === 'de';
+    const money = (amount: number) => {
+        const formatted = amount.toLocaleString(isGerman ? 'de-DE' : 'en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+        return isGerman ? `${formatted} €` : `$${formatted}`;
+    };
+
+    const netTotal = data.results.totalCost;
+    const costBody = isGerman
+        ? [
+            ["Gesamtbedarf", `${data.results.tonnage} t`],
+            ["Preis pro Tonne", money(data.results.pricePerTon)],
+            ["Zwischensumme (Netto)", money(netTotal)],
+            [`MwSt. (${GERMAN_VAT_RATE * 100} %)`, money(netTotal * GERMAN_VAT_RATE)],
+            ["GESAMTBETRAG (Brutto)", money(netTotal * (1 + GERMAN_VAT_RATE))],
+        ]
+        : [
+            ["Total Required Tonnage", `${data.results.tonnage} t`],
+            ["Price per Ton", money(data.results.pricePerTon)],
+            ["TOTAL ESTIMATE", money(netTotal)],
+        ];
 
     const currentY = (doc as any).lastAutoTable.finalY + 15;
 
     autoTable(doc, {
         startY: currentY,
-        head: [["Cost Breakdown", "Amount"]],
+        head: [isGerman ? ["Kostenübersicht", "Betrag"] : ["Cost Breakdown", "Amount"]],
         body: costBody,
         theme: "grid",
         headStyles: { fillColor: costHeaderColor, textColor: 255, fontStyle: 'bold' },

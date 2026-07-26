@@ -14,6 +14,7 @@ export default function CoolingPredictor() {
     const [mixTemp, setMixTemp] = useState<string>("160");
     const [airTemp, setAirTemp] = useState<string>("20");
     const [windSpeed, setWindSpeed] = useState<string>("5");
+    const [thickness, setThickness] = useState<string>("4");
 
     // Results
     const [timeAvailable, setTimeAvailable] = useState<number>(0);
@@ -23,9 +24,10 @@ export default function CoolingPredictor() {
             mixTemp: parseFloat(mixTemp) || 0,
             airTemp: parseFloat(airTemp) || 0,
             windSpeed: parseFloat(windSpeed) || 0,
+            thickness: parseFloat(thickness) || 4,
         });
         setTimeAvailable(time);
-    }, [mixTemp, airTemp, windSpeed]);
+    }, [mixTemp, airTemp, windSpeed, thickness]);
 
     return (
         <Card className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
@@ -39,7 +41,7 @@ export default function CoolingPredictor() {
                 </div>
             </CardHeader>
             <CardContent className="space-y-6">
-                <div className="grid gap-4 sm:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <Input
                         label={t('cooling.mixTemp')}
                         icon={Thermometer}
@@ -64,6 +66,14 @@ export default function CoolingPredictor() {
                         onChange={(e) => setWindSpeed(e.target.value)}
                         placeholder="10"
                     />
+                    <Input
+                        label={t('cooling.thickness')}
+                        icon={Thermometer}
+                        type="number"
+                        value={thickness}
+                        onChange={(e) => setThickness(e.target.value)}
+                        placeholder="4"
+                    />
                 </div>
 
                 <div className="rounded-xl bg-orange-500/10 border border-orange-500/20 p-4 flex flex-col items-center justify-center text-center">
@@ -86,7 +96,7 @@ export default function CoolingPredictor() {
 
                 <div className="mt-4 p-3 bg-secondary/30 rounded-lg border border-border/50 text-[10px] text-muted-foreground leading-relaxed">
                     <p className="font-semibold mb-1">Disclaimer</p>
-                    <p>This calculation is a heuristic estimate based on standard cooling rates. Actual cooling times may vary due to humidity, ground temperature, and layer thickness. Always verify with a core thermometer.</p>
+                    <p>This calculation is a heuristic estimate based on standard cooling rates for the given lift thickness. Actual cooling times may vary due to humidity and ground temperature. Always verify with a core thermometer.</p>
                 </div>
             </CardContent>
         </Card>

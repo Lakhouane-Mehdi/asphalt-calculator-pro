@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { FileCheck } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useStore } from "@/lib/store";
+import { parseLocaleNumber } from "@/lib/calculations";
 
 export default function PDFReportButton() {
     const { t } = useLanguage();
@@ -13,7 +14,7 @@ export default function PDFReportButton() {
     const store = useStore();
 
     const generatePDF = () => {
-        const totalThickness = store.layers.reduce((sum, layer) => sum + (parseFloat(layer.thickness.replace(',', '.')) || 0), 0).toString();
+        const totalThickness = store.layers.reduce((sum, layer) => sum + parseLocaleNumber(layer.thickness), 0).toString();
         const primaryDensity = store.layers[0]?.density || '2.4';
 
         const doc = new jsPDF();

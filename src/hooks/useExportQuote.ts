@@ -3,6 +3,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useStore } from "@/lib/store";
 import { generateQuote } from "@/lib/quote-generator";
+import { parseLocaleNumber } from "@/lib/calculations";
 
 export function useExportQuote() {
     const { language } = useLanguage();
@@ -26,8 +27,8 @@ export function useExportQuote() {
             results: {
                 area: area.toString(),
                 tonnage: tonnage,
-                pricePerTon: pricePerTon || "0",
-                totalCost: totalCost.toLocaleString(language === 'de' ? 'de-DE' : 'en-US')
+                pricePerTon: parseLocaleNumber(pricePerTon),
+                totalCost: totalCost
             }
         });
     };

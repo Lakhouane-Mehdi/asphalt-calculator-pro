@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { z } from 'zod';
-import { calculateTotal, AsphaltTonnageParams } from './calculations';
+import { calculateTotal, parseLocaleNumber, AsphaltTonnageParams } from './calculations';
 
 // --- Validation Schemas ---
 
@@ -91,11 +91,7 @@ interface AppState {
 
 export const useStore = create<AppState>()(persist((set, get) => {
     const runCalculations = (state: Partial<AppState>) => {
-        const parseInput = (val: string) => {
-            if (!val) return 0;
-            const parsed = parseFloat(val.replace(',', '.'));
-            return isNaN(parsed) ? 0 : parsed;
-        };
+        const parseInput = parseLocaleNumber;
 
         const s = { ...get(), ...state };
 

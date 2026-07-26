@@ -77,6 +77,7 @@ export const translations = {
             mixTemp: "Mix Temp (°C)",
             airTemp: "Air Temp (°C)",
             windSpeed: "Wind (km/h)",
+            thickness: "Lift Thickness (cm)",
             timeAvailable: "Time Available",
             coreTempNote: "Until core temp < 80°C",
             warning: "Warning: Rapid compaction required!"
@@ -215,6 +216,7 @@ export const translations = {
             mixTemp: "Mischgut (°C)",
             airTemp: "Luft (°C)",
             windSpeed: "Wind (km/h)",
+            thickness: "Einbaudicke (cm)",
             timeAvailable: "Verfügbare Zeit",
             coreTempNote: "Bis Kerntemperatur < 80°C",
             warning: "Achtung: Schnelle Verdichtung nötig!"

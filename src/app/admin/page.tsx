@@ -103,6 +103,8 @@ export default function AdminDashboard() {
                         <p className="text-muted-foreground mt-2">Real-time anonymous user distribution.</p>
                     </div>
                     <button
+                        type="button"
+                        title="Refresh stats"
                         onClick={fetchStats}
                         disabled={loading}
                         className="p-3 bg-secondary rounded-xl hover:bg-secondary/80 transition disabled:opacity-50"
