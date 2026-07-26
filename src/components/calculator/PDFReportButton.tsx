@@ -69,7 +69,7 @@ export default function PDFReportButton() {
 
         // --- Header ---
         doc.setFontSize(22);
-        doc.setTextColor(255, 165, 0); // Primary Orange/Yellow
+        doc.setTextColor(30, 144, 255); // Brand blue
         doc.text(L.title, 14, 20);
 
         doc.setFontSize(10);
@@ -102,7 +102,7 @@ export default function PDFReportButton() {
                 [`${t('area')} (${t('units.area')})`, store.area.toFixed(2)],
             ],
             theme: 'striped',
-            headStyles: { fillColor: [255, 165, 0], textColor: [0, 0, 0] },
+            headStyles: { fillColor: [30, 144, 255], textColor: [255, 255, 255] },
         });
 
         // --- Results ---
@@ -140,7 +140,7 @@ export default function PDFReportButton() {
     return (
         <Button
             onClick={generatePDF}
-            className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg space-x-2"
+            className="w-full bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white shadow-lg space-x-2"
         >
             <FileCheck className="w-4 h-4" />
             <span>{t('downloadReport') || 'Download PDF Report'}</span>

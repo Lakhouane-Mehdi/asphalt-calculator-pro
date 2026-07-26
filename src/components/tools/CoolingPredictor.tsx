@@ -32,7 +32,7 @@ export default function CoolingPredictor() {
     return (
         <Card className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
             <CardHeader>
-                <div className="h-10 w-10 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-600">
+                <div className="h-10 w-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-500">
                     <Thermometer className="h-6 w-6" />
                 </div>
                 <div>
@@ -76,13 +76,13 @@ export default function CoolingPredictor() {
                     />
                 </div>
 
-                <div className="rounded-xl bg-orange-500/10 border border-orange-500/20 p-4 flex flex-col items-center justify-center text-center">
-                    <span className="text-xs font-medium text-orange-600 mb-1">{t('cooling.timeAvailable')}</span>
+                <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4 flex flex-col items-center justify-center text-center">
+                    <span className="text-xs font-medium text-blue-500 mb-1">{t('cooling.timeAvailable')}</span>
                     <div className="flex items-baseline gap-1">
-                        <span className="text-4xl font-bold text-orange-600">{timeAvailable}</span>
-                        <span className="text-sm font-medium text-orange-600">min</span>
+                        <span className="text-4xl font-bold text-blue-500">{timeAvailable}</span>
+                        <span className="text-sm font-medium text-blue-500">min</span>
                     </div>
-                    <p className="text-[10px] text-orange-600/60 mt-1 flex items-center gap-1">
+                    <p className="text-[10px] text-blue-500/60 mt-1 flex items-center gap-1">
                         <Clock className="h-3 w-3" /> {t('cooling.coreTempNote')}
                     </p>
                 </div>

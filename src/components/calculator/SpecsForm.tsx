@@ -161,9 +161,10 @@ export default function SpecsForm({ step }: SpecsFormProps) {
                                 <div className="flex items-center gap-2">
                                     <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t('compaction')}:</label>
                                     <button
+                                        type="button"
                                         onClick={() => updateLayer(layer.id, { isLoose: !layer.isLoose })}
                                         className={`text-[10px] font-bold px-3 py-1 rounded-lg border transition-all ${layer.isLoose
-                                            ? 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30'
+                                            ? 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300'
                                             : 'bg-secondary text-secondary-foreground border-border'}`}
                                     >
                                         {layer.isLoose ? t('loose') : t('compacted')}

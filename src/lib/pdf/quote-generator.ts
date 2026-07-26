@@ -125,17 +125,17 @@ export function generateQuote(data: QuoteData) {
         value.toLocaleString(locale, { minimumFractionDigits: 0, maximumFractionDigits: digits });
 
     // --- Branding / Header ---
-    doc.setFillColor(245, 158, 11); // Amber-500
+    doc.setFillColor(30, 144, 255); // Brand blue
     doc.rect(0, 0, 210, 45, "F");
 
-    doc.setTextColor(0, 0, 0);
+    doc.setTextColor(255, 255, 255);
     doc.setFontSize(28);
     doc.setFont("helvetica", "bold");
     doc.text(data.company?.name || "Smart Field", 20, 22);
 
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(0, 0, 0);
+    doc.setTextColor(255, 255, 255);
     doc.text(`${L.date}: ${data.date}`, 150, 22);
     if (isInvoice && data.invoiceNumber) {
         doc.text(`${L.invoiceNo}: ${data.invoiceNumber}`, 150, 28);
@@ -146,7 +146,7 @@ export function generateQuote(data: QuoteData) {
 
     doc.setFontSize(9);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(50, 50, 50);
+    doc.setTextColor(235, 245, 255);
     doc.text(data.company?.address || "Made by Mehdi Lakhouane", 20, 38);
 
     // --- Issuer details (required for a compliant invoice) ---
@@ -184,7 +184,7 @@ export function generateQuote(data: QuoteData) {
 
     // --- Specs Table ---
     const tableHeaderColor: [number, number, number] = [30, 41, 59];
-    const costHeaderColor: [number, number, number] = [217, 119, 6];
+    const costHeaderColor: [number, number, number] = [11, 107, 232];
 
     const specsBody: string[][] = [
         [L.totalLength, `${data.specs.length} m`],

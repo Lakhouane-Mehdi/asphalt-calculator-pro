@@ -11,8 +11,8 @@
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 210 100% 45%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
@@ -23,7 +23,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --ring: 210 100% 45%;
     --radius: 0.75rem;
   }
 
@@ -35,9 +35,9 @@
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    /* Primary: Industrial Amber/Gold for high visibility/premium feel */
-    --primary: 47.9 95.8% 53.1%;
-    --primary-foreground: 26 83.3% 14.1%;
+    /* Primary: Industrial Blue for high visibility/premium feel */
+    --primary: 210 100% 56%;
+    --primary-foreground: 0 0% 100%;
     /* Secondary: Deep Asphalt Grey */
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
@@ -49,10 +49,13 @@
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 47.9 95.8% 53.1%;
+    --ring: 210 100% 56%;
   }
 
-  /* Ultra High Contrast (Sunlight Mode) */
+  /* Ultra High Contrast (Sunlight Mode)
+     Intentionally stays amber-on-black regardless of the blue brand colour:
+     yellow/amber on black is the most legible pairing in direct sunlight,
+     which is the entire point of this theme. Do not "harmonise" it. */
   .theme-sunlight {
     --background: 0 0% 0%; /* Pure Black */
     --foreground: 47.9 95.8% 53.1%; /* Bright Yellow/Amber */
